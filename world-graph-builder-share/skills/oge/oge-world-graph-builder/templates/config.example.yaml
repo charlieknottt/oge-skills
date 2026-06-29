@@ -1,0 +1,42 @@
+# Per-game configuration for the world-graph-builder skill.
+# Copy into games/<game_id>/inputs/config.yaml and edit. Everything here is optional;
+# sensible defaults are shipped, so a minimal config can be just the scenario files.
+
+mode: create            # create | rework
+
+# Node-count calibration (the validator's band). Default band is 25-35.
+node_band:
+  min: 25
+  max: 35
+
+# Functional swimlane categories for the lean graph's `category` field.
+# Leave empty to let generation choose; set to enforce a fixed swimlane set.
+categories:
+  - Levers
+  - Buildouts
+  - Supply
+  - Infrastructure
+  - Economy
+  - Outcomes
+  - Pool
+
+# Teams / player config. Tells the builder which Levers to create so they map to
+# real team action spaces. Optional but recommended.
+teams:
+  - name: US Policy Team
+    mandate: Manage the supply-chain crisis while preserving allied cohesion.
+  - name: PRC Team
+    mandate: Advance strategic position while managing economic exposure.
+
+# Optional external grounding (off by default). The GM enables per scenario.
+mcp:
+  enabled: false
+  sources: []          # e.g. [scite, web]
+
+# Edge generation strategy.
+edges:
+  strategy: fan-out    # fan-out (per-node, thorough) | single-pass (cheaper)
+
+# Rework mode only: path to the existing approved graph to revise.
+existing_graph: null   # e.g. inputs/existing_graph.json
+change_request: null   # free-text description of the change for rework mode

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oge/skills/world-graph-builder/stocks.schema.json",
+  "title": "OGE Rich Stock Model",
+  "description": "The research-grade stock model that backs each lean-graph node and feeds the qualitative sidecar. Matches examples/gordian_knot_stocks.json.",
+  "type": "object",
+  "required": ["stocks"],
+  "properties": {
+    "scenario": { "type": "string" },
+    "count": { "type": "integer" },
+    "stocks": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/stock" }
+    },
+    "design_notes": { "type": "string" }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "stock": {
+      "type": "object",
+      "required": ["id", "name", "pmesii", "baseline_normalized", "inverted", "stock_type"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "pmesii": {
+          "type": "string",
+          "enum": ["Political", "Military", "Economic", "Social", "Information", "Infrastructure", "Physical"],
+          "description": "the fixed PMESII-P dimension (Physical = Physical Environment)"
+        },
+        "measures": { "type": "string", "description": "what the stock concretely measures" },
+        "unit": { "type": "string", "description": "display unit + normalization note" },
+        "baseline_normalized": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "starting value on the normalized 0-1 scale"
+        },
+        "inverted": { "type": "boolean" },
+        "stock_type": {
+          "type": "string",
+          "enum": ["zero-sum-pool", "scheduled-threat", "spendable", "service-level", "clock", "buildout", "trust-sentiment", "upstream-access", "policy-lever", "capacity", "other"],
+          "description": "stock type from the 9 questions (reference/quant_questions.md); dynamics (the lean graph 'type' field) is derived from this"
+        },
+        "sector": { "type": "string", "description": "scenario-specific grouping (free text)" },
+        "increases_when": { "type": "string" },
+        "decreases_when": { "type": "string" },
+        "rationale": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

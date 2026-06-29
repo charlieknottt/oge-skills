@@ -1,0 +1,10 @@
+# This repo holds only the compact world-graph-builder skill.
+# Ignore everything at the project root by default...
+/*
+# ...except:
+!/.gitignore
+!/world-graph-builder-share/
+
+# Hygiene inside tracked folders
+**/.DS_Store
+**/__pycache__/

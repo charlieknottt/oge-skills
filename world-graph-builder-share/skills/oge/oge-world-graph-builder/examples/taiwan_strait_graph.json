@@ -1,0 +1,477 @@
+{
+  "nodes": [
+    { "id": "us_mil_posture",       "label": "US Military Posture",                  "category": "Levers",         "type": "Lever",       "starting_value": 60, "inverted": false },
+    { "id": "us_dip_pressure",      "label": "US Diplomatic Pressure",               "category": "Levers",         "type": "Lever",       "starting_value": 50, "inverted": false },
+    { "id": "us_arms_transfers",    "label": "US Arms Transfers to Taiwan",          "category": "Levers",         "type": "Lever",       "starting_value": 40, "inverted": false },
+    { "id": "us_sanctions_pressure","label": "US Sanctions on PRC",                  "category": "Levers",         "type": "Lever",       "starting_value": 30, "inverted": false },
+    { "id": "cn_blockade_intensity","label": "PRC Blockade Intensity",               "category": "Levers",         "type": "Lever",       "starting_value": 38, "inverted": false },
+    { "id": "cn_econ_coercion",     "label": "PRC Economic Coercion",                "category": "Levers",         "type": "Lever",       "starting_value": 45, "inverted": false },
+    { "id": "cn_info_operations",   "label": "PRC Information Operations",           "category": "Levers",         "type": "Lever",       "starting_value": 60, "inverted": false },
+    { "id": "cn_critical_minerals", "label": "PRC Critical Mineral Export Controls", "category": "Levers",         "type": "Lever",       "starting_value": 35, "inverted": false },
+    { "id": "cn_nuclear_signaling", "label": "PRC Nuclear Signaling",                "category": "Levers",         "type": "Lever",       "starting_value": 25, "inverted": false },
+    { "id": "taiwan_defense_readiness", "label": "Taiwan Defense Readiness",         "category": "Buildouts",      "type": "Accumulator", "starting_value": 45, "inverted": false },
+    { "id": "taiwan_asym_capability",   "label": "Taiwan Asymmetric Capability",     "category": "Buildouts",      "type": "Accumulator", "starting_value": 40, "inverted": false },
+    { "id": "ally_cohesion",        "label": "Allied Cohesion (JP/KR/PH)",           "category": "Buildouts",      "type": "Level",       "starting_value": 55, "inverted": false },
+    { "id": "us_fwd_basing",        "label": "US Forward Basing Access",             "category": "Buildouts",      "type": "Level",       "starting_value": 65, "inverted": false },
+    { "id": "semiconductor_supply", "label": "Semiconductor Supply Continuity",      "category": "Supply",         "type": "Level",       "starting_value": 65, "inverted": false },
+    { "id": "taiwan_export_revenue","label": "Taiwan Export Revenue",                "category": "Economy",        "type": "Level",       "starting_value": 60, "inverted": false },
+    { "id": "global_econ_confidence","label": "Global Economic Confidence",          "category": "Economy",        "type": "Level",       "starting_value": 60, "inverted": false },
+    { "id": "foreign_investment_flight", "label": "Foreign Investment Flight",       "category": "Economy",        "type": "Accumulator", "starting_value": 30, "inverted": true  },
+    { "id": "us_defense_industry",  "label": "US Defense Industrial Base",           "category": "Economy",        "type": "Level",       "starting_value": 55, "inverted": false },
+    { "id": "strait_stability",     "label": "Strait Stability",                     "category": "Outcomes",       "type": "Level",       "starting_value": 40, "inverted": false },
+    { "id": "escalation_risk",      "label": "Escalation Risk",                      "category": "Outcomes",       "type": "Accumulator", "starting_value": 55, "inverted": true  },
+    { "id": "cn_mil_credibility",   "label": "PRC Military Credibility",             "category": "Outcomes",       "type": "Accumulator", "starting_value": 50, "inverted": false },
+    { "id": "us_credibility",       "label": "US Deterrence Credibility",            "category": "Outcomes",       "type": "Level",       "starting_value": 55, "inverted": false },
+    { "id": "cn_isolation",         "label": "PRC International Isolation",          "category": "Outcomes",       "type": "Accumulator", "starting_value": 35, "inverted": false },
+    { "id": "humanitarian_pressure","label": "Humanitarian / Refugee Pressure",      "category": "Outcomes",       "type": "Accumulator", "starting_value": 15, "inverted": true  },
+    { "id": "us_domestic_support",  "label": "US Domestic Political Support",        "category": "Pool",           "type": "Drifter",     "starting_value": 50, "inverted": false },
+    { "id": "cn_domestic_pressure", "label": "PRC Domestic Political Pressure",      "category": "Pool",           "type": "Drifter",     "starting_value": 60, "inverted": false },
+    { "id": "taiwan_public_resolve","label": "Taiwan Public Resolve",                "category": "Pool",           "type": "Level",       "starting_value": 55, "inverted": false },
+    { "id": "taiwan_gov_resolve",   "label": "Taiwan Government Resolve",            "category": "Pool",           "type": "Level",       "starting_value": 60, "inverted": false },
+    { "id": "eu_alignment",         "label": "EU Strategic Alignment with US",       "category": "Pool",           "type": "Level",       "starting_value": 45, "inverted": false },
+    { "id": "asean_neutrality",     "label": "ASEAN Neutrality",                     "category": "Pool",           "type": "Level",       "starting_value": 60, "inverted": false },
+    { "id": "information_environment", "label": "Information Environment Clarity",   "category": "Infrastructure", "type": "Level",       "starting_value": 45, "inverted": true  },
+    { "id": "cyber_conflict_intensity", "label": "Cyber Conflict Intensity",         "category": "Infrastructure", "type": "Accumulator", "starting_value": 50, "inverted": true  },
+    { "id": "us_intel_advantage",   "label": "US Intelligence Advantage",            "category": "Infrastructure", "type": "Level",       "starting_value": 60, "inverted": false }
+  ],
+  "edges": [
+    {
+      "id": "e_usmil_uscred",
+      "source": "us_mil_posture", "target": "us_credibility",
+      "sign": "+", "magnitude": "strong", "lag": 1,
+      "mechanism": "Forward CSG deployment signals US willingness to intervene, shaping PRC and allied calculations immediately."
+    },
+    {
+      "id": "e_usmil_escl",
+      "source": "us_mil_posture", "target": "escalation_risk",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "PRC interprets increased US presence as threatening, raising near-term miscalculation risk."
+    },
+    {
+      "id": "e_usmil_ally",
+      "source": "us_mil_posture", "target": "ally_cohesion",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "US show of force reassures treaty allies Washington will fulfill its commitments."
+    },
+    {
+      "id": "e_usdip_cnisol",
+      "source": "us_dip_pressure", "target": "cn_isolation",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "US diplomatic campaign builds a multilateral coalition framing PRC as the aggressor."
+    },
+    {
+      "id": "e_usdip_ally",
+      "source": "us_dip_pressure", "target": "ally_cohesion",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Active US engagement maintains allied unity of purpose and reduces free-riding on US commitment."
+    },
+    {
+      "id": "e_usdip_eu",
+      "source": "us_dip_pressure", "target": "eu_alignment",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "US outreach and intelligence sharing pull European partners toward a common position."
+    },
+    {
+      "id": "e_usarms_asym",
+      "source": "us_arms_transfers", "target": "taiwan_asym_capability",
+      "sign": "+", "magnitude": "strong", "lag": 3,
+      "mechanism": "Weapons systems take time to deliver and absorb but substantially improve asymmetric capacity once integrated."
+    },
+    {
+      "id": "e_usarms_cnblock",
+      "source": "us_arms_transfers", "target": "cn_blockade_intensity",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "PRC uses arms transfers as immediate justification to escalate blockade, framing them as US interference."
+    },
+    {
+      "id": "e_usarms_escl",
+      "source": "us_arms_transfers", "target": "escalation_risk",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Arms transfers signal US intent to support Taiwan militarily, raising stakes for both sides."
+    },
+    {
+      "id": "e_ussanct_cnisol",
+      "source": "us_sanctions_pressure", "target": "cn_isolation",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "US-led sanctions build the economic isolation coalition and signal international costs of aggression."
+    },
+    {
+      "id": "e_ussanct_globecon",
+      "source": "us_sanctions_pressure", "target": "global_econ_confidence",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Economic conflict between the two largest economies rattles global markets and supply chains."
+    },
+    {
+      "id": "e_cnblock_strait",
+      "source": "cn_blockade_intensity", "target": "strait_stability",
+      "sign": "-", "magnitude": "strong", "lag": 1,
+      "mechanism": "Blockade is the direct mechanism of destabilization, severing trade and civilian movement through the strait."
+    },
+    {
+      "id": "e_cnblock_semi",
+      "source": "cn_blockade_intensity", "target": "semiconductor_supply",
+      "sign": "-", "magnitude": "strong", "lag": 1,
+      "mechanism": "Taiwan's export logistics disrupted immediately as shipping lanes and air cargo routes are cut."
+    },
+    {
+      "id": "e_cnblock_twexport",
+      "source": "cn_blockade_intensity", "target": "taiwan_export_revenue",
+      "sign": "-", "magnitude": "strong", "lag": 1,
+      "mechanism": "Export revenue collapses as Taiwan's access to global markets is severed by the blockade."
+    },
+    {
+      "id": "e_cnblock_escl",
+      "source": "cn_blockade_intensity", "target": "escalation_risk",
+      "sign": "+", "magnitude": "strong", "lag": 1,
+      "mechanism": "Blockade is the single largest escalation driver, triggering US, allied, and Taiwanese military responses."
+    },
+    {
+      "id": "e_cnblock_globecon",
+      "source": "cn_blockade_intensity", "target": "global_econ_confidence",
+      "sign": "-", "magnitude": "strong", "lag": 1,
+      "mechanism": "Markets react immediately to confirmed blockade of the world's leading semiconductor source."
+    },
+    {
+      "id": "e_cnblock_fif",
+      "source": "cn_blockade_intensity", "target": "foreign_investment_flight",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Capital flees as kinetic conflict risk materializes and foreign firms accelerate contingency exits."
+    },
+    {
+      "id": "e_cnblock_ally",
+      "source": "cn_blockade_intensity", "target": "ally_cohesion",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "PRC aggression galvanizes Japan, South Korea, and Philippines to tighten allied coordination."
+    },
+    {
+      "id": "e_cnblock_hum",
+      "source": "cn_blockade_intensity", "target": "humanitarian_pressure",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Disruption of shipping creates food, fuel, and medical shortages and triggers pre-conflict displacement."
+    },
+    {
+      "id": "e_cnblock_cnmilcred",
+      "source": "cn_blockade_intensity", "target": "cn_mil_credibility",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Successful blockade exercise demonstrates PLA Navy and Air Force operational reach."
+    },
+    {
+      "id": "e_cnblock_twresolve",
+      "source": "cn_blockade_intensity", "target": "taiwan_public_resolve",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Existential threat galvanizes Taiwanese public in a short-term rally-around-the-flag effect."
+    },
+    {
+      "id": "e_cnecon_globecon",
+      "source": "cn_econ_coercion", "target": "global_econ_confidence",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "PRC targeted tariffs, export controls, and import bans disrupt global trade patterns and investor confidence."
+    },
+    {
+      "id": "e_cnecon_twexport",
+      "source": "cn_econ_coercion", "target": "taiwan_export_revenue",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "PRC coercion directly targets Taiwan's export markets and supply chain relationships."
+    },
+    {
+      "id": "e_cninfo_infoenv",
+      "source": "cn_info_operations", "target": "information_environment",
+      "sign": "+", "magnitude": "strong", "lag": 1,
+      "mechanism": "PRC disinformation floods information channels with competing narratives, degrading shared understanding immediately."
+    },
+    {
+      "id": "e_cninfo_twresolve",
+      "source": "cn_info_operations", "target": "taiwan_public_resolve",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Sustained narrative warfare — casualty inflation, legitimacy attacks, defeatist messaging — erodes public confidence over time."
+    },
+    {
+      "id": "e_cnmin_usdef",
+      "source": "cn_critical_minerals", "target": "us_defense_industry",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Export controls on rare earths and critical minerals disrupt US defense supply chains dependent on PRC inputs."
+    },
+    {
+      "id": "e_cnmin_globecon",
+      "source": "cn_critical_minerals", "target": "global_econ_confidence",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Critical mineral disruption cascades through automotive, electronics, and defense industrial sectors worldwide."
+    },
+    {
+      "id": "e_cnnuke_escl",
+      "source": "cn_nuclear_signaling", "target": "escalation_risk",
+      "sign": "+", "magnitude": "strong", "lag": 1,
+      "mechanism": "Nuclear rhetoric dramatically raises stakes and miscalculation risk immediately."
+    },
+    {
+      "id": "e_cnnuke_strait",
+      "source": "cn_nuclear_signaling", "target": "strait_stability",
+      "sign": "-", "magnitude": "strong", "lag": 1,
+      "mechanism": "Nuclear coercion forces all parties into reactive crisis management — the most destabilizing signal available."
+    },
+    {
+      "id": "e_cnnuke_ally",
+      "source": "cn_nuclear_signaling", "target": "ally_cohesion",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Some allies pull back from confrontational posture when nuclear risks become explicit."
+    },
+    {
+      "id": "e_cnnuke_cnisol",
+      "source": "cn_nuclear_signaling", "target": "cn_isolation",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "International community responds immediately to nuclear rhetoric with condemnation, increasing PRC isolation."
+    },
+    {
+      "id": "e_cnnuke_usdom",
+      "source": "cn_nuclear_signaling", "target": "us_domestic_support",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Public fear of nuclear war reduces domestic appetite for sustained confrontation with PRC."
+    },
+    {
+      "id": "e_twdef_strait",
+      "source": "taiwan_defense_readiness", "target": "strait_stability",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Credible defense capability raises PRC's expected cost of attack, functioning as deterrent over time."
+    },
+    {
+      "id": "e_twasym_twdef",
+      "source": "taiwan_asym_capability", "target": "taiwan_defense_readiness",
+      "sign": "+", "magnitude": "strong", "lag": 2,
+      "mechanism": "Asymmetric systems — anti-ship missiles, layered air defense — are the core of Taiwan's defense strategy."
+    },
+    {
+      "id": "e_ally_fwdbasing",
+      "source": "ally_cohesion", "target": "us_fwd_basing",
+      "sign": "+", "magnitude": "strong", "lag": 2,
+      "mechanism": "Allied cooperation is the prerequisite for forward basing — Japan and Philippines access depends on political alignment."
+    },
+    {
+      "id": "e_ally_uscred",
+      "source": "ally_cohesion", "target": "us_credibility",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Allied solidarity publicly amplifies US deterrence credibility, signaling coalition response to any PRC action."
+    },
+    {
+      "id": "e_fwd_uscred",
+      "source": "us_fwd_basing", "target": "us_credibility",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Physical forward presence is more credible than statements — bases mean US forces are already in theater."
+    },
+    {
+      "id": "e_fwd_strait",
+      "source": "us_fwd_basing", "target": "strait_stability",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Forward-deployed forces deter opportunistic PRC escalation by reducing US reaction time."
+    },
+    {
+      "id": "e_fwd_intel",
+      "source": "us_fwd_basing", "target": "us_intel_advantage",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Forward bases provide ISR infrastructure — signals intelligence, maritime patrol, and reconnaissance assets."
+    },
+    {
+      "id": "e_semi_globecon",
+      "source": "semiconductor_supply", "target": "global_econ_confidence",
+      "sign": "+", "magnitude": "strong", "lag": 1,
+      "mechanism": "Chip supply continuity is the central variable for global manufacturing sectors; markets track it directly."
+    },
+    {
+      "id": "e_semi_usdef",
+      "source": "semiconductor_supply", "target": "us_defense_industry",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Advanced chip supply continuity buffers damage to US defense production from PRC mineral controls."
+    },
+    {
+      "id": "e_twexport_twgov",
+      "source": "taiwan_export_revenue", "target": "taiwan_gov_resolve",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Economic strength gives Taiwan's government fiscal capacity and political room to sustain a resistance posture."
+    },
+    {
+      "id": "e_fif_globecon",
+      "source": "foreign_investment_flight", "target": "global_econ_confidence",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Capital exodus from Taiwan signals cascading global risk, reinforcing market pessimism worldwide."
+    },
+    {
+      "id": "e_usdef_twasym",
+      "source": "us_defense_industry", "target": "taiwan_asym_capability",
+      "sign": "+", "magnitude": "moderate", "lag": 3,
+      "mechanism": "US production capacity for missiles, drones, and munitions enables sustained arms transfers that build Taiwan's capability over time."
+    },
+    {
+      "id": "e_strait_semi",
+      "source": "strait_stability", "target": "semiconductor_supply",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "A stable strait preserves Taiwan's ability to maintain export logistics and production continuity."
+    },
+    {
+      "id": "e_strait_fif",
+      "source": "strait_stability", "target": "foreign_investment_flight",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Stability signals lower conflict risk, reducing investor motivation to exit Taiwan positions."
+    },
+    {
+      "id": "e_escl_hum",
+      "source": "escalation_risk", "target": "humanitarian_pressure",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Rising conflict probability drives pre-conflict displacement, refugee flows, and humanitarian planning."
+    },
+    {
+      "id": "e_escl_globecon",
+      "source": "escalation_risk", "target": "global_econ_confidence",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Markets track escalation trajectory directly; rising risk reduces global economic confidence."
+    },
+    {
+      "id": "e_escl_usdom",
+      "source": "escalation_risk", "target": "us_domestic_support",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Rising escalation risk eventually erodes US public appetite for sustained confrontation."
+    },
+    {
+      "id": "e_escl_cyber",
+      "source": "escalation_risk", "target": "cyber_conflict_intensity",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "As the broader conflict escalates, cyber operations intensify as a below-threshold tool for both sides."
+    },
+    {
+      "id": "e_cnmilcred_cndom",
+      "source": "cn_mil_credibility", "target": "cn_domestic_pressure",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Demonstrated military capability gives PRC leadership political cover, reducing domestic pressure to prove toughness."
+    },
+    {
+      "id": "e_cnmilcred_strait",
+      "source": "cn_mil_credibility", "target": "strait_stability",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "A more capable PLA shifts the military balance, undermining deterrence and reducing strait stability over time."
+    },
+    {
+      "id": "e_cnmilcred_asean",
+      "source": "cn_mil_credibility", "target": "asean_neutrality",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "ASEAN's preference for neutrality is reinforced by PRC military strength — they avoid antagonizing a capable PRC."
+    },
+    {
+      "id": "e_uscred_ally",
+      "source": "us_credibility", "target": "ally_cohesion",
+      "sign": "+", "magnitude": "strong", "lag": 1,
+      "mechanism": "Credible US commitment is the load-bearing variable for allied cohesion — allies follow when they believe the US will show up."
+    },
+    {
+      "id": "e_uscred_strait",
+      "source": "us_credibility", "target": "strait_stability",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Credible deterrence is the primary stabilizer — PRC less likely to escalate when US resolve is not in doubt."
+    },
+    {
+      "id": "e_uscred_cnblock",
+      "source": "us_credibility", "target": "cn_blockade_intensity",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "As US credibility solidifies, the expected cost of sustaining the blockade rises, creating pressure to de-escalate."
+    },
+    {
+      "id": "e_cnisol_cndom",
+      "source": "cn_isolation", "target": "cn_domestic_pressure",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "International isolation fuels PRC nationalist narrative — leadership faces pressure to respond to perceived humiliation."
+    },
+    {
+      "id": "e_hum_cnisol",
+      "source": "humanitarian_pressure", "target": "cn_isolation",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Images of humanitarian crisis in and around Taiwan drive international condemnation of PRC."
+    },
+    {
+      "id": "e_hum_eu",
+      "source": "humanitarian_pressure", "target": "eu_alignment",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Visible humanitarian crisis mobilizes European political opinion and creates domestic pressure on EU governments."
+    },
+    {
+      "id": "e_usdom_usmil",
+      "source": "us_domestic_support", "target": "us_mil_posture",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Public and congressional support enables political will to sustain military posture and absorb forward deployment costs."
+    },
+    {
+      "id": "e_cndom_cnblock",
+      "source": "cn_domestic_pressure", "target": "cn_blockade_intensity",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Domestic nationalist pressure pushes PRC leadership toward demonstrative military action as a signal of strength."
+    },
+    {
+      "id": "e_cndom_cninfo",
+      "source": "cn_domestic_pressure", "target": "cn_info_operations",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Leadership channels domestic pressure into aggressive information operations to show resolve without kinetic escalation."
+    },
+    {
+      "id": "e_twpub_twgov",
+      "source": "taiwan_public_resolve", "target": "taiwan_gov_resolve",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Strong public will gives Taiwan's government a mandate to hold firm and resist accommodation."
+    },
+    {
+      "id": "e_twgov_twdef",
+      "source": "taiwan_gov_resolve", "target": "taiwan_defense_readiness",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Government commitment of budget and political capital drives defense mobilization and readiness improvements."
+    },
+    {
+      "id": "e_eu_cnisol",
+      "source": "eu_alignment", "target": "cn_isolation",
+      "sign": "+", "magnitude": "moderate", "lag": 2,
+      "mechanism": "EU alignment with the US substantially expands PRC's international isolation, closing European diplomatic escape valves."
+    },
+    {
+      "id": "e_asean_cnisol",
+      "source": "asean_neutrality", "target": "cn_isolation",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "ASEAN neutrality limits scope of PRC isolation by keeping a significant bloc from joining the US-led coalition."
+    },
+    {
+      "id": "e_asean_fwdbasing",
+      "source": "asean_neutrality", "target": "us_fwd_basing",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Neutral ASEAN members may restrict US access to forward bases in the region to avoid PRC retaliation."
+    },
+    {
+      "id": "e_infoenv_ally",
+      "source": "information_environment", "target": "ally_cohesion",
+      "sign": "-", "magnitude": "moderate", "lag": 2,
+      "mechanism": "Information fog makes coordination among allies more difficult, slowing response and creating exploitable gaps."
+    },
+    {
+      "id": "e_infoenv_escl",
+      "source": "information_environment", "target": "escalation_risk",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Poor shared understanding raises probability of miscalculation — parties may act on false or incomplete information."
+    },
+    {
+      "id": "e_cyber_infoenv",
+      "source": "cyber_conflict_intensity", "target": "information_environment",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Cyber attacks on communications networks and government systems degrade the information environment."
+    },
+    {
+      "id": "e_cyber_strait",
+      "source": "cyber_conflict_intensity", "target": "strait_stability",
+      "sign": "-", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Cyber conflict is below-threshold escalation that degrades stability without crossing kinetic lines."
+    },
+    {
+      "id": "e_intel_infoenv",
+      "source": "us_intel_advantage", "target": "information_environment",
+      "sign": "-", "magnitude": "strong", "lag": 1,
+      "mechanism": "US intelligence capability counters PRC information operations and maintains clarity for US decision-makers and allies."
+    },
+    {
+      "id": "e_intel_uscred",
+      "source": "us_intel_advantage", "target": "us_credibility",
+      "sign": "+", "magnitude": "moderate", "lag": 1,
+      "mechanism": "Intelligence-backed decision-making improves US response quality and reduces the risk of being caught flat-footed."
+    }
+  ]
+}
