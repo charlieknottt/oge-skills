@@ -11,8 +11,8 @@ Do the whole thing in one shot, then report. Use the skill's defaults: node band
 functional-swimlane categories, 9 stock questions, 8 sidecar questions, 6 rounds x 6 ticks, MCP off.
 
 ## 1. Load the skill
-Read `skills/oge/oge-world-graph-builder/SKILL.md` and the reference files in
-`skills/oge/oge-world-graph-builder/reference/` (`taxonomy.md`, `indicator_framework.md`,
+Read `.claude/skills/oge-world-graph-builder/SKILL.md` and the reference files in
+`.claude/skills/oge-world-graph-builder/reference/` (`taxonomy.md`, `indicator_framework.md`,
 `quant_questions.md`, `qual_questions.md`, `update_guideline.md`, `schema.md`). Follow that
 pipeline and those schemas exactly. Skim `examples/gordian_knot_graph.json` for the target shape.
 
@@ -22,7 +22,7 @@ supplementary docs. If it does not exist, stop and say so. Pick a snake_case `<s
 filename/dir and create the output dir `world-graphs/<slug>/`.
 
 ## 3. Phase 0 — Ingest
-Run `python3 skills/oge/oge-world-graph-builder/scripts/parse_docs.py <doc> [<doc>...]` to get
+Run `python3 .claude/skills/oge-world-graph-builder/scripts/parse_docs.py <doc> [<doc>...]` to get
 clean text. Extract the scenario frame: central crisis, actors/teams, time horizon and rounds,
 named scarcities and threats, win/lose framing.
 
@@ -49,16 +49,16 @@ propagation-sanity). Write the lean `world-graphs/<slug>/world_graph.json` to
 
 ## 7. Validate (hard gate)
 ```
-python3 skills/oge/oge-world-graph-builder/scripts/validate_graph.py world-graphs/<slug>/world_graph.json --json world-graphs/<slug>/validation_report.json
-python3 skills/oge/oge-world-graph-builder/scripts/lint_taxonomy.py  world-graphs/<slug>/world_graph.json
-python3 skills/oge/oge-world-graph-builder/scripts/graph_stats.py    world-graphs/<slug>/world_graph.json
+python3 .claude/skills/oge-world-graph-builder/scripts/validate_graph.py world-graphs/<slug>/world_graph.json --json world-graphs/<slug>/validation_report.json
+python3 .claude/skills/oge-world-graph-builder/scripts/lint_taxonomy.py  world-graphs/<slug>/world_graph.json
+python3 .claude/skills/oge-world-graph-builder/scripts/graph_stats.py    world-graphs/<slug>/world_graph.json
 ```
 `validate_graph.py` MUST report 0 errors — if not, fix the graph and re-run until clean. Review
 the lint findings (levers-with-incoming = fix; unfunded accumulators = fix or justify).
 
 ## 8. Render the playable preview
 ```
-python3 skills/oge/oge-world-graph-builder/scripts/render_preview.py world-graphs/<slug>/world_graph.json
+python3 .claude/skills/oge-world-graph-builder/scripts/render_preview.py world-graphs/<slug>/world_graph.json
 ```
 This writes `world-graphs/<slug>/<slug>.html` (Gordian-style UI). Then `open` it.
 

@@ -1,10 +1,24 @@
-# This repo holds only the compact world-graph-builder skill.
-# Ignore everything at the project root by default...
+# This repo tracks only the OGE skills and their commands.
+# Ignore everything by default...
 /*
-# ...except:
+# ...keep these top-level entries:
 !/.gitignore
-!/world-graph-builder-share/
+!/README.md
+!/.claude/
 
-# Hygiene inside tracked folders
+# Inside .claude, keep only commands/ and skills/
+/.claude/*
+!/.claude/commands/
+!/.claude/skills/
+
+# Keep only our command(s)
+/.claude/commands/*
+!/.claude/commands/graph.md
+
+# Keep the skills (whole subtree)
+/.claude/skills/*
+!/.claude/skills/oge-world-graph-builder/
+
+# Hygiene
 **/.DS_Store
 **/__pycache__/

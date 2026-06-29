@@ -1,28 +1,34 @@
-# OGE World Graph Builder
+# OGE Skills
+
+Claude Code skills for building **OGE / wargame** scenarios.
+
+Currently one skill:
+
+### `oge-world-graph-builder`
 
 Turn a scenario document into a validated causal **world graph**: a runtime graph of stocks
 (nodes) and signed, time-delayed edges, plus a rich stock model and a locked qualitative
 sidecar. Generation is LLM-driven but gated by deterministic Python validators, so nothing
 ships on model say-so alone.
 
-This is the complete, self-contained skill — the minimum needed to build and remake graphs.
-Bring your own scenario doc (PDF / DOCX / MD / TXT).
-
-## Contents
+## Layout
 
 ```
-.claude/commands/graph.md               the /graph slash command (one-shot driver)
-.claude/skills/oge-world-graph-builder   → symlink to the skill package
-skills/oge/oge-world-graph-builder/      the skill:
-  SKILL.md            pipeline + when-to-use
-  reference/          the fixed framework (taxonomy, 9 stock questions, 8 sidecar
-                      questions, 0–100 ruler, schema spec)
-  schemas/            JSON Schemas for the graph and the stock model
-  scripts/            validate / lint / stats / render / parse / bootstrap (stdlib only)
-  prompts/            the per-phase generation prompts
-  examples/           gold-standard graphs (target shape + smoke-test fixtures)
-  templates/          per-game config example
+.claude/
+  commands/graph.md                  the /graph slash command (one-shot driver)
+  skills/
+    oge-world-graph-builder/         the skill (single source of truth)
+      SKILL.md            pipeline + when-to-use
+      reference/          the fixed framework (taxonomy, 9 stock questions,
+                          8 sidecar questions, 0–100 ruler, schema spec)
+      schemas/            JSON Schemas for the graph and the stock model
+      scripts/            validate / lint / stats / render / parse / bootstrap (stdlib only)
+      prompts/            the per-phase generation prompts
+      examples/           gold-standard graphs (target shape + smoke-test fixtures)
+      templates/          per-game config example
 ```
+
+Generated graphs are written to `world-graphs/<slug>/` (git-ignored).
 
 ## Requirements
 
@@ -33,12 +39,12 @@ skills/oge/oge-world-graph-builder/      the skill:
 Optional one-time check + smoke test against the bundled examples:
 
 ```bash
-bash skills/oge/oge-world-graph-builder/scripts/bootstrap.sh
+bash .claude/skills/oge-world-graph-builder/scripts/bootstrap.sh
 ```
 
 ## Build a graph (Claude Code)
 
-Open this folder in Claude Code and point `/graph` at any scenario doc:
+Open this repo in Claude Code and point `/graph` at any scenario doc:
 
 ```
 /graph path/to/your_scenario.pdf
@@ -55,7 +61,7 @@ path/to/your_scenario.pdf"*.
 | File | What it is |
 |---|---|
 | `world_graph.json` | the lean runtime graph (PRIMARY — nodes + signed/lagged edges) |
-| `stocks.json` | the rich stock model behind each node (9-question metadata) |
+| `stocks.json` | the rich stock model behind each node |
 | `qualitative_sidecar.md` | locked qualitative context (actors, red lines, fog of war) |
 | `validation_report.json` | deterministic validation result |
 | `generation_log.md` | per-phase rationale + stock/edge red-team findings |
@@ -64,8 +70,8 @@ path/to/your_scenario.pdf"*.
 ## Deterministic tools (run standalone on any graph JSON, no API)
 
 ```bash
-SK=skills/oge/oge-world-graph-builder/scripts
-G=skills/oge/oge-world-graph-builder/examples/gordian_knot_graph.json   # or your own world_graph.json
+SK=.claude/skills/oge-world-graph-builder/scripts
+G=.claude/skills/oge-world-graph-builder/examples/gordian_knot_graph.json   # or your own world_graph.json
 
 python3 $SK/validate_graph.py  $G   # hard schema gate (must be 0 errors)
 python3 $SK/lint_taxonomy.py   $G   # structural / taxonomy rules
@@ -73,4 +79,4 @@ python3 $SK/graph_stats.py     $G   # metrics: balance, degree, feedback loops
 python3 $SK/render_preview.py  $G   # writes a playable <name>.html next to the input
 ```
 
-Start with `skills/oge/oge-world-graph-builder/SKILL.md`.
+Start with `.claude/skills/oge-world-graph-builder/SKILL.md`.
