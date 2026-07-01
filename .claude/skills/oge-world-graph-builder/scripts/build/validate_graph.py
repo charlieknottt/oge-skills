@@ -22,7 +22,7 @@ import sys
 
 NODE_TYPES = {"Level", "Lever", "Accumulator", "Drifter"}
 EDGE_SIGNS = {"+", "-"}
-EDGE_MAGNITUDES = {"weak", "moderate", "strong"}
+# edge magnitude is a number in [0, 1] (weak ~0.2-0.4, moderate ~0.5-0.7, strong ~0.8-1.0)
 ID_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 NODE_REQUIRED = ("id", "label", "category", "type", "starting_value", "inverted")
@@ -130,8 +130,10 @@ def validate(graph, min_nodes=25, max_nodes=35, categories=None, allow_parallel=
                 seen_pairs.add((src, tgt))
         if "sign" in e and e.get("sign") not in EDGE_SIGNS:
             errors.append(f"{where}: sign '{e.get('sign')}' must be one of {sorted(EDGE_SIGNS)}")
-        if "magnitude" in e and e.get("magnitude") not in EDGE_MAGNITUDES:
-            errors.append(f"{where}: magnitude '{e.get('magnitude')}' must be one of {sorted(EDGE_MAGNITUDES)}")
+        if "magnitude" in e:
+            m = e.get("magnitude")
+            if _is_bool(m) or not isinstance(m, (int, float)) or not (0 <= m <= 1):
+                errors.append(f"{where}: magnitude must be a number in [0, 1] (got {m!r})")
         if "lag" in e and not (_is_int(e.get("lag")) and e["lag"] >= 0):
             errors.append(f"{where}: lag must be an integer >= 0")
         if "mechanism" in e and not (isinstance(e.get("mechanism"), str) and e["mechanism"].strip()):

@@ -5,7 +5,7 @@ lint_taxonomy.py - structural / taxonomy lint for an OGE world graph.
 Implements the "6b. Structural / taxonomy lint" rules from the
 world-graph-builder plan. Run this after validate_graph.py passes; it assumes
 the graph is already schema-valid and checks the node-class rules from the
-taxonomy (reference/taxonomy.md).
+taxonomy (guide/1-how-the-model-works.md).
 
 FAIL findings are hard taxonomy violations (block advance).
 WARN findings are things a human should look at but do not block.

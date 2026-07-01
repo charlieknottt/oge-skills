@@ -9,7 +9,7 @@
 # Usage:  bash scripts/bootstrap.sh
 set -u
 
-SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SCRIPTS="$SKILL_DIR/scripts"
 EXAMPLES="$SKILL_DIR/examples"
 
@@ -33,7 +33,7 @@ python3 -m pip install --quiet PyPDF2 python-docx >/dev/null 2>&1 \
 rc=0
 for g in gordian_knot_graph taiwan_strait_graph; do
   echo "-- validating $g.json --"
-  python3 "$SCRIPTS/validate_graph.py" "$EXAMPLES/$g.json" || rc=1
+  python3 "$SCRIPTS/build/validate_graph.py" "$EXAMPLES/$g.json" || rc=1
 done
 
 if [ "$rc" -eq 0 ]; then

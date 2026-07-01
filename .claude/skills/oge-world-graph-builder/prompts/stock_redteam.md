@@ -34,6 +34,6 @@ cite stock ids.
 }
 ```
 `block` means at least one `fail` that must be resolved before GM approval. A synthesis step
-applies findings; then `scripts/validate_graph.py` and `scripts/lint_taxonomy.py` run; then the
+applies findings; then `scripts/build/validate_graph.py` and `scripts/build/lint_taxonomy.py` run; then the
 list goes to the **Game Manager** for approval. A GM cut/merge triggers a repair pass on the
 affected edges before round one.

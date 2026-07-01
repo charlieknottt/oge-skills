@@ -38,7 +38,7 @@
         "type": {
           "type": "string",
           "enum": ["Level", "Lever", "Accumulator", "Drifter"],
-          "description": "engine node-class; drives runtime dynamics. See reference/taxonomy.md."
+          "description": "the node's behavior: Level, Lever, Accumulator, or Drifter. See guide/1-how-the-model-works.md."
         },
         "starting_value": {
           "type": "number",
@@ -62,9 +62,10 @@
         "target": { "type": "string", "description": "id of the affected node" },
         "sign": { "type": "string", "enum": ["+", "-"], "description": "direction of influence" },
         "magnitude": {
-          "type": "string",
-          "enum": ["weak", "moderate", "strong"],
-          "description": "qualitative strength bucket (guidance, not a literal multiplier)"
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "edge strength as a discrete 0-1 number, chosen at graph creation. Guide bands: weak ~0.2-0.4, moderate ~0.5-0.7, strong ~0.8-1.0. Used directly as the weight of the source's push on the target."
         },
         "lag": {
           "type": "integer",

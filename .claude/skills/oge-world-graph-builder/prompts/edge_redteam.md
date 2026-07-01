@@ -33,6 +33,6 @@ lens**. Find problems; cite edge ids. Default to flagging when uncertain.
   "verdict": "block|advise"
 }
 ```
-A synthesis step applies findings, then `scripts/validate_graph.py` and
-`scripts/lint_taxonomy.py` run (hard gate), then the graph goes to the **Game Manager** for
+A synthesis step applies findings, then `scripts/build/validate_graph.py` and
+`scripts/build/lint_taxonomy.py` run (hard gate), then the graph goes to the **Game Manager** for
 approval. On approval the world-state vector is finalized.

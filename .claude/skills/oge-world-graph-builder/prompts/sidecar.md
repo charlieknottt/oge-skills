@@ -12,7 +12,7 @@ edge generation because you need only the scenario frame, not the approved stock
 
 ## Task
 
-Answer the **eight questions** (reference/qual_questions.md) from the scenario. Each maps to one
+Answer the **eight questions** (guide/1-how-the-model-works.md) from the scenario. Each maps to one
 section of the output. Ground every answer in the scenario text.
 
 1. **Actors & objectives** - who each actor is (played and key unplayed), what they want, and

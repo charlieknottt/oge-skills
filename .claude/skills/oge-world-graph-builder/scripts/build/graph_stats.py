@@ -78,7 +78,11 @@ def compute(graph):
         if t in by_id:
             indeg[t] += 1
         sign_counts[e.get("sign")] += 1
-        mag_counts[e.get("magnitude")] += 1
+        m = e.get("magnitude")
+        if isinstance(m, (int, float)):
+            mag_counts["weak (<0.45)" if m < 0.45 else "strong (>0.75)" if m > 0.75 else "moderate (0.45-0.75)"] += 1
+        else:
+            mag_counts[str(m)] += 1
 
     type_counts = Counter(n.get("type") for n in nodes if isinstance(n, dict))
     cat_counts = Counter(n.get("category") for n in nodes if isinstance(n, dict))

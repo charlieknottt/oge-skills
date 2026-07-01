@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oge/skills/world-graph-builder/stocks.schema.json",
-  "title": "OGE Rich Stock Model",
-  "description": "The research-grade stock model that backs each lean-graph node and feeds the qualitative sidecar. Matches examples/gordian_knot_stocks.json.",
+  "title": "OGE Stock Model",
+  "description": "The detailed model behind each graph node. Feeds the qualitative sidecar. Matches examples/gordian_knot_stocks.json. The value field is named 'node_value' (0-1) to match the graph-update skill's stock format; 'inverted' and 'stock_type' are extra fields the creation side needs and the update side can ignore.",
   "type": "object",
   "required": ["stocks"],
   "properties": {
@@ -19,7 +19,7 @@
   "$defs": {
     "stock": {
       "type": "object",
-      "required": ["id", "name", "pmesii", "baseline_normalized", "inverted", "stock_type"],
+      "required": ["id", "name", "pmesii", "node_value", "inverted", "stock_type"],
       "properties": {
         "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
         "name": { "type": "string", "minLength": 1 },
@@ -29,23 +29,23 @@
           "description": "the fixed PMESII-P dimension (Physical = Physical Environment)"
         },
         "measures": { "type": "string", "description": "what the stock concretely measures" },
-        "unit": { "type": "string", "description": "display unit + normalization note" },
-        "baseline_normalized": {
+        "unit": { "type": "string", "description": "display unit + note on how it maps to the scale" },
+        "node_value": {
           "type": "number",
           "minimum": 0,
           "maximum": 1,
-          "description": "starting value on the normalized 0-1 scale"
+          "description": "starting value on the 0-1 scale (shared field name with the graph-update skill). The graph's starting_value is this x 100."
         },
-        "inverted": { "type": "boolean" },
+        "increases_when": { "type": "string" },
+        "decreases_when": { "type": "string" },
+        "rationale": { "type": "string" },
+        "inverted": { "type": "boolean", "description": "true when a lower value is the good state (a threat or compromise stock)" },
         "stock_type": {
           "type": "string",
           "enum": ["zero-sum-pool", "scheduled-threat", "spendable", "service-level", "clock", "buildout", "trust-sentiment", "upstream-access", "policy-lever", "capacity", "other"],
-          "description": "stock type from the 9 questions (reference/quant_questions.md); dynamics (the lean graph 'type' field) is derived from this"
+          "description": "one of the 9 stock types from the questions in guide/1-how-the-model-works.md. The graph's node behavior (the 'type' field: Level/Lever/Accumulator/Drifter) is derived from this."
         },
-        "sector": { "type": "string", "description": "scenario-specific grouping (free text)" },
-        "increases_when": { "type": "string" },
-        "decreases_when": { "type": "string" },
-        "rationale": { "type": "string" }
+        "sector": { "type": "string", "description": "scenario-specific grouping (free text)" }
       },
       "additionalProperties": true
     }
