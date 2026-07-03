@@ -1,24 +1,8 @@
-# This repo tracks only the OGE skills and their commands.
-# Ignore everything by default...
-/*
-# ...keep these top-level entries:
-!/.gitignore
-!/README.md
-!/.claude/
-
-# Inside .claude, keep only commands/ and skills/
-/.claude/*
-!/.claude/commands/
-!/.claude/skills/
-
-# Keep only our command(s)
-/.claude/commands/*
-!/.claude/commands/graph.md
-
-# Keep the skills (whole subtree)
-/.claude/skills/*
-!/.claude/skills/oge-world-graph-builder/
-
 # Hygiene
 **/.DS_Store
 **/__pycache__/
+*.pyc
+
+# Per-scenario generated outputs (not part of the skill package)
+/world-graphs/
+/games/

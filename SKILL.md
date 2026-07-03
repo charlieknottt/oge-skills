@@ -19,10 +19,9 @@ game. At game time, Claude reads this graph and reasons over it; the graph is th
 physics engine. So the outputs that matter most are the **structure** (which node affects which)
 and the **plain-English reason on each edge**, more than the exact numbers.
 
-New to this? Read the three guides in order:
+New to this? Read the two guides in order:
 - `guide/1-how-the-model-works.md` — nodes, edges, the 4 behaviors, the questions. Start here.
 - `guide/2-data-shapes.md` — the exact fields in each file.
-- `guide/3-realism-checks.md` — how we keep the graph honest and believable.
 
 ## When to use
 - Standing up a new OGE/wargame scenario and you need the node + edge world model (create mode).
@@ -70,10 +69,8 @@ Phase 0   Read the docs           scripts/build/parse_docs.py -> a clean scenari
 Phase 1   Propose nodes           one agent per dimension, the 9 questions   (prompts/stock_proposal.md)
 Phase 2   Stress-test + approve   6 reviewers + Python checks + GM approval  (prompts/stock_redteam.md)
 Phase 3   Write the sidecar       the 8 questions                           (prompts/sidecar.md)
-Phase 3b  Write behavior rules    from the scenario, blind to the edges     (prompts/invariant_author.md)
 Phase 4   Generate edges          the causal graph from nodes + sidecar     (prompts/edge_proposal.md)
 Phase 5   Stress-test + approve   6 reviewers + Python checks + GM approval  (prompts/edge_redteam.md)
-Phase 5b  Believability review    tested AI reviewer + thousands of plays    (prompts/edge_review.md)
           Rework re-enters at Phase 1 (new nodes) or Phase 4 (new edges)
 ```
 
@@ -88,10 +85,6 @@ Phase 5b  Believability review    tested AI reviewer + thousands of plays    (pr
   triggers an edge-repair pass so the graph entering round one is one the model reasoned over whole.
 - **Phase 3 — Write the sidecar.** Answer the 8 questions into `qualitative_sidecar.md`. Runs in
   parallel with Phases 1-2 (it needs only the summary). Locked when the game starts.
-- **Phase 3b — Write the behavior rules.** Write the rules the believability check (Phase 5b) will
-  test the graph's behavior against, using the scenario **only**, blind to the edges, so each rule
-  is an independent expectation and not a paraphrase of the graph. `build_invariant_author.py`
-  builds the job; `validate_invariants.py` cleans it into `invariants.yaml`. See guide 3.
 - **Phase 4 — Generate edges.** Wire the nodes into a causal graph grounded in the sidecar's
   mechanisms, then merge (remove mirror-image duplicates, resolve sign conflicts). Apply the wiring
   rules from guide 1 (levers get no incoming arrows, accumulators pay off on a delay, threats bite
@@ -99,11 +92,6 @@ Phase 5b  Believability review    tested AI reviewer + thousands of plays    (pr
 - **Phase 5 — Stress-test the edges, then approve.** Six reviewers (real mechanism vs hand-wave,
   correct sign, missing edges, contradictions, vague reasons, runaway structure). Apply findings,
   run the Python checks, then GM approval. On approval the starting state is finalized.
-- **Phase 5b — Believability review.** Phases 2 and 5 check the graph against the sidecar (an AI
-  artifact) for internal consistency. Phase 5b adds the **realism** question, grounded in the
-  human-written scenario, and first **proves whether the reviewer can be trusted** by testing it on
-  known-bad edges. It replaces the edge-by-edge expert audit (too much to do by hand) with a tested
-  AI reviewer plus a short human sign-off. Full explanation in guide 3.
 
 ## What keeps it honest
 The AI does the writing; the **guarantees** are plain Python. Nothing advances on the model's word.
@@ -113,8 +101,6 @@ The AI does the writing; the **guarantees** are plain Python. Nothing advances o
 - `scripts/build/lint_taxonomy.py` — wiring rules: a lever with an incoming arrow fails, an
   unconnected node fails, a mis-wired accumulator or a slow-biting threat warns.
 - `scripts/build/graph_stats.py` — the shape report: sign/strength split, degree, balance, loops.
-- The `scripts/checks/` believability layer (guide 3): thousands of random playthroughs, a reviewer
-  we test before trusting, edge grounding, and one short human sign-off.
 - Adversarial review at Phases 2 and 5, bounded retries (about 3, then surface leftovers to the GM),
   and a logged reason for every node and edge.
 
@@ -129,8 +115,6 @@ Both bundled examples are gold-standard: `validate_graph.py` passes clean on eac
 is informational and intentionally flags the known Gordian accumulators and Taiwan levers as teaching
 cases. Run `bash scripts/build/bootstrap.sh` for a one-shot environment check plus smoke test.
 
-For the believability layer, see `scripts/checks/README.md` and guide 3.
-
 ## Rework mode
 Given an existing graph plus a change request, re-enter at Phase 1 (node change) or Phase 4 (edge
 change), or run the "are the current nodes enough?" check (an agent plus a White Cell reasonableness
@@ -144,7 +128,6 @@ SKILL.md                     this file (how the pipeline fits together)
 guide/
   1-how-the-model-works.md   nodes, edges, the 4 behaviors, the questions, the scale
   2-data-shapes.md           the exact fields in each output file
-  3-realism-checks.md        the mechanical checks + the believability layer
 schemas/
   graph.schema.json          machine schema for world_graph.json
   stocks.schema.json         machine schema for stocks.json
@@ -156,10 +139,9 @@ scripts/
     graph_stats.py           shape report
     render_preview.py        world_graph.json -> playable HTML demo
     bootstrap.sh             environment check + smoke test on the examples
-  checks/                    the believability layer (see checks/README.md + guide 3)
 prompts/
-  stock_proposal.md  stock_redteam.md  sidecar.md  invariant_author.md
-  edge_proposal.md   edge_redteam.md   edge_review.md  reconcile_invariant.md
+  stock_proposal.md  stock_redteam.md  sidecar.md
+  edge_proposal.md   edge_redteam.md
 templates/
   config.example.yaml        per-game configuration
 examples/
@@ -176,7 +158,5 @@ on the server. `scripts/build/bootstrap.sh` installs the optional doc-parsing li
 smoke-tests the box against the bundled examples before any real game.
 
 ## Status note
-The build pipeline (Phases 0-5) and the mechanical checks are solid and proven on two scenarios.
-The believability layer (Phase 5b, `scripts/checks/`) is wired end-to-end and demonstrated on the
-Ukraine graph, but should be treated as **beta** until it has been run on a second scenario to flush
-out any assumptions baked in from the first. See the "honest limits" section of guide 3.
+The build pipeline (Phases 0-5) and the mechanical checks are solid and proven on two scenarios
+(Gordian Knot and Taiwan Strait).

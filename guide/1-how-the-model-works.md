@@ -1,8 +1,7 @@
 # 1. How the world model works
 
 This is the plain-English explanation of what the skill builds and why. Read this first.
-(The exact JSON fields are in `2-data-shapes.md`. The checks that keep it honest are in
-`3-realism-checks.md`.)
+(The exact JSON fields are in `2-data-shapes.md`.)
 
 ## The big picture
 
