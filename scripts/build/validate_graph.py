@@ -17,6 +17,7 @@ Usage:
 """
 import argparse
 import json
+import keyword
 import re
 import sys
 
@@ -74,6 +75,8 @@ def validate(graph, min_nodes=25, max_nodes=35, categories=None, allow_parallel=
             where = f"nodes[{i}] '{nid}'"
             if not ID_RE.match(nid):
                 errors.append(f"{where}: id must match ^[a-z][a-z0-9_]*$ (snake_case)")
+            if keyword.iskeyword(nid):
+                errors.append(f"{where}: id '{nid}' is a Python keyword; rename it (a behavior-rule test cannot reference it)")
             if nid in node_ids:
                 errors.append(f"{where}: duplicate node id")
             node_ids.add(nid)

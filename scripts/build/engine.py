@@ -54,7 +54,9 @@ class Engine:
         self.rail_power = float(rail_power)
         nodes = graph["nodes"]
         by_id = {n["id"]: n for n in nodes}
-        self.ids = [n["id"] for n in nodes]
+        # de-dupe ids: a duplicate id would double-count in downstream per-node tallies. The graph
+        # schema forbids duplicates, but the engine should not misbehave if handed an unvalidated one.
+        self.ids = list(dict.fromkeys(n["id"] for n in nodes))
         self.base, self.aup, self.adn, self.want, self.type = {}, {}, {}, {}, {}
         for n in nodes:
             au, ad = RATES.get(n["type"], RATES["Level"])
@@ -67,7 +69,7 @@ class Engine:
         for e in graph["edges"]:
             if e["source"] in by_id and e["target"] in by_id:
                 w = mag_weight(e.get("magnitude", 0.6)) * (1 if e.get("sign", "+") == "+" else -1)
-                self.incoming[e["target"]].append((e["source"], w, int(e.get("lag", 1))))
+                self.incoming[e["target"]].append((e["source"], w, max(0, int(e.get("lag", 1)))))
 
     def _move(self, dev_val, delta, i):
         val = self.base[i] + dev_val

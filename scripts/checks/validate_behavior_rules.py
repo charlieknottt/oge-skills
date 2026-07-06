@@ -18,19 +18,45 @@ Usage:
 Writes OUTDIR/behavior_rules.yaml and OUTDIR/behavior_rules_report.json
 """
 import argparse
+import ast
 import json
 import os
 import re
 import sys
 
 CONF = {"high", "medium", "low"}
-# names allowed in a test besides node ids (operators are keywords, not names)
-ALLOWED_EXTRA = {"and", "or", "not", "True", "False", "abs", "min", "max"}
 ID_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 
+# A rule "test" must be a plain true/false expression: comparisons of node ids and numbers, combined
+# with and/or/not. Nothing else. This is enforced on the parse tree, not just the names, because the
+# check step later evaluates these in a no-builtins sandbox where `100/x` (x can be 0 on a rail), a
+# call, a lambda, an attribute, or a walrus would crash or silently corrupt state.
+_ALLOWED_NODES = (
+    ast.Expression,
+    ast.BoolOp, ast.And, ast.Or,
+    ast.UnaryOp, ast.Not, ast.USub, ast.UAdd,
+    ast.Compare, ast.Lt, ast.LtE, ast.Gt, ast.GtE, ast.Eq, ast.NotEq,
+    ast.Name, ast.Load, ast.Constant,
+)
 
-def node_ids(graph):
-    return {n["id"] for n in graph.get("nodes", []) if isinstance(n, dict) and "id" in n}
+
+def _is_bool_test(node):
+    """True if node is a comparison, or and/or/not built from comparisons -- a real true/false test,
+    not a bare node value like `supply and frontline` (which evaluates to a number)."""
+    if isinstance(node, ast.Compare):
+        return True
+    if isinstance(node, ast.BoolOp):
+        return all(_is_bool_test(v) for v in node.values)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
+        return _is_bool_test(node.operand)
+    return False
+
+
+def node_ids(doc):
+    """Node ids from either a world_graph.json ('nodes') or a stocks.json ('stocks'). Phase 3b runs
+    before the edges exist, so this usually points at stocks.json; both shapes use an 'id' per item."""
+    items = doc.get("nodes") or doc.get("stocks") or []
+    return {n["id"] for n in items if isinstance(n, dict) and "id" in n}
 
 
 def unwrap(doc):
@@ -50,12 +76,25 @@ def expr_ok(expr, ids):
     if not isinstance(expr, str) or not expr.strip():
         return False, "empty"
     try:
-        code = compile(expr, "<rule>", "eval")
+        tree = ast.parse(expr, mode="eval")
     except SyntaxError as e:
         return False, f"does not parse ({e.msg})"
-    bad = [n for n in code.co_names if n not in ids and n not in ALLOWED_EXTRA]
-    if bad:
-        return False, "unknown node id(s): " + ", ".join(sorted(set(bad)))
+    names = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, _ALLOWED_NODES):
+            return False, ("only node ids, numbers, comparisons and and/or/not are allowed "
+                           f"(found {type(node).__name__})")
+        if isinstance(node, ast.Constant) and not isinstance(node.value, (int, float)):
+            return False, "only numeric thresholds are allowed"
+        if isinstance(node, ast.Name):
+            names.add(node.id)
+    unknown = sorted(n for n in names if n not in ids)
+    if unknown:
+        return False, "unknown node id(s): " + ", ".join(unknown)
+    if not names:
+        return False, "references no node id"
+    if not _is_bool_test(tree.body):
+        return False, "must be a comparison, or and/or/not of comparisons"
     return True, ""
 
 
@@ -123,7 +162,8 @@ def to_yaml(rules):
 def main():
     ap = argparse.ArgumentParser(description="Clean authored behavior rules into behavior_rules.yaml.")
     ap.add_argument("--rules", required=True, help="the author's JSON output")
-    ap.add_argument("--graph", required=True, help="world_graph.json (for the list of real node ids)")
+    ap.add_argument("--graph", required=True,
+                    help="world_graph.json OR stocks.json -- either supplies the real node id list")
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
 

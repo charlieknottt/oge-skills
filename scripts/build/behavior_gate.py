@@ -33,7 +33,7 @@ import random
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from engine import Engine
+from engine import Engine, mag_weight
 
 # random decision-stream generator (same tier distribution as the parked MC harness)
 TIERS = {"T1": 3, "T2": 6, "T3": 11, "T4": 18}
@@ -61,7 +61,8 @@ def _c(cid, status, evidence):
 def reachability(graph):
     adj = {}
     for e in graph["edges"]:
-        adj.setdefault(e["source"], []).append(e["target"])
+        if mag_weight(e.get("magnitude", 0.6)) != 0:  # a zero-magnitude edge carries no influence
+            adj.setdefault(e["source"], []).append(e["target"])
     driven = [n["id"] for n in graph["nodes"] if n.get("type") in ("Lever", "Drifter")]
     seen, stack = set(driven), list(driven)
     while stack:
@@ -121,11 +122,16 @@ def impulse_checks(eng, amount, ticks, settle_eps, settle_tail, osc_delta, osc_m
         return [_c("settles", "warn", "no levers to impulse"),
                 _c("no_oscillation", "warn", "no levers to impulse")]
     unsettled, ringing = [], []
+    half = max(settle_tail, ticks // 2)
     for lv in levers:
         traj = eng.run({0: {lv: amount}}, ticks)
         tail_move = max(abs(traj[t][i] - traj[t - 1][i])
                         for t in range(ticks - settle_tail + 1, ticks + 1) for i in eng.ids)
-        if tail_move > settle_eps:
+        mid_move = max(abs(traj[t][i] - traj[t - 1][i])
+                       for t in range(half - settle_tail + 1, half + 1) for i in eng.ids)
+        # unsettled only if it is still moving AND not clearly converging (tail not well below mid).
+        # A slow-but-converging graph has tail_move << mid_move and passes; a runaway does not.
+        if tail_move > settle_eps and tail_move > 0.6 * mid_move:
             unsettled.append((lv, tail_move))
         for i in eng.ids:
             deltas = [traj[t][i] - traj[t - 1][i] for t in range(1, ticks + 1)]
