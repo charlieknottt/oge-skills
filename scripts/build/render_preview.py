@@ -24,13 +24,8 @@ import json
 import os
 import sys
 
-# dynamics -> (alphaUp slow, alphaDown fast). Levers/anchors hold at 0,0 (move only on shock).
-RATES = {"Lever": (0.0, 0.0), "Level": (0.12, 0.22), "Accumulator": (0.06, 0.13), "Drifter": (0.10, 0.18)}
-def mag_weight(m):
-    # magnitude is a number in [0, 1]; tolerate the legacy weak/moderate/strong strings.
-    if isinstance(m, (int, float)):
-        return float(m)
-    return {"weak": 0.35, "moderate": 0.6, "strong": 0.9}.get(m, 0.6)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from engine import RATES, SPEED, SAT_A, mag_weight  # single source of truth for the physics
 # left-to-right swimlane order: inputs -> world -> outcomes (others appended in first-seen order)
 GROUP_PREF = ["Levers", "Buildouts", "Compromise", "Supply", "Infrastructure", "Economy",
               "Outcomes", "Pool"]
@@ -100,8 +95,8 @@ def build_data_js(graph, rounds, ticks, seed):
 
     j = json.dumps
     return (
-        "const SPEED=0.7, TPR=" + str(ticks) + ", ROUNDS=" + str(rounds) +
-        ", TOTAL=ROUNDS*TPR, SAT_A=38, MINV=0, MAXV=100;\n"
+        "const SPEED=" + repr(SPEED) + ", TPR=" + str(ticks) + ", ROUNDS=" + str(rounds) +
+        ", TOTAL=ROUNDS*TPR, SAT_A=" + repr(SAT_A) + ", MINV=0, MAXV=100;\n"
         "const RAW=" + j(raw) + ";\n"
         "const IDS=Object.keys(RAW);\n"
         "const LABEL={},BASE={},AUP={},ADN={},WANT={};\n"
