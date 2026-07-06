@@ -27,6 +27,12 @@ For each candidate stock, fill every field:
 - `node_value` (0-1; place it on the 0-100 scale in guide/1-how-the-model-works.md)
 - `measures`, `unit`, `increases_when`, `decreases_when`, `rationale`
 
+**Naming (`name`): plain and self-explanatory. No acronyms, initialisms, or insider jargon.** A
+reader who does not know the domain must still grasp what the stock is. Spell everything out: write
+"Automotive Software Capability", not "Automotive SDV Capability"; "Frontier AI Model Access", not
+"FDPR-controlled access". If a term is not common knowledge, rename it or say it plainly. The graph's
+node `label` is taken from this `name`, so keep it clear.
+
 Apply the **four admission tests** as a self-check: something moves it, it moves something, it
 is not a duplicate, a human can narrate a move. Demote failures to a `sidecar_candidates` list
 with a one-line reason instead of dropping them. Policy-levers (`stock_type: policy-lever`,
