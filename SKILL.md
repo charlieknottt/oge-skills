@@ -74,6 +74,7 @@ Phase 3   Write the sidecar       the 8 questions                           (pro
 Phase 3b  Write behavior rules    from the scenario, blind to the arrows    (prompts/author_behavior_rules.md)
 Phase 4   Generate edges          the causal graph from nodes + sidecar     (prompts/edge_proposal.md)
 Phase 5   Stress-test + approve   6 reviewers + Python checks + GM approval  (prompts/edge_redteam.md)
+Phase 5b  Check behavior rules    run the rules against the simulation       (scripts/checks/check_behavior_rules.py)
           Rework re-enters at Phase 1 (new nodes) or Phase 4 (new edges)
 ```
 
@@ -102,6 +103,11 @@ Phase 5   Stress-test + approve   6 reviewers + Python checks + GM approval  (pr
   correct sign, missing edges, contradictions, vague reasons, runaway structure). Apply findings,
   run the Python checks (schema, wiring, shape, and the dynamic behavior gate), then GM approval. On
   approval the starting state is finalized.
+- **Phase 5b — Check the behavior rules.** Run the Phase-3b rules against the simulation with
+  `scripts/checks/check_behavior_rules.py`: play the graph thousands of times and count how often each
+  rule is broken. A high-confidence rule that fails means the graph is probably wrong -- send it back
+  to Phase 4 to rebuild the named nodes (bounded, about 3 tries), then re-check. Medium/low-confidence
+  failures go to a short human list. No LLM: the pass/fail is a number from the simulation.
 
 ## What keeps it honest
 The AI does the writing; the **guarantees** are plain Python. Nothing advances on the model's word.
@@ -122,6 +128,7 @@ python3 scripts/build/validate_graph.py outputs/world_graph.json --json outputs/
 python3 scripts/build/lint_taxonomy.py   outputs/world_graph.json
 python3 scripts/build/graph_stats.py     outputs/world_graph.json
 python3 scripts/build/behavior_gate.py   outputs/world_graph.json   # dynamic gate: exit 1 = not deployable
+python3 scripts/checks/check_behavior_rules.py outputs/world_graph.json --rules outputs/behavior_rules.json  # Phase 5b: exit 1 = rebuild needed
 python3 scripts/build/render_preview.py  outputs/world_graph.json   # writes outputs/<scenario>.html
 ```
 Both bundled examples are gold-standard: `validate_graph.py` passes clean on each; `lint_taxonomy.py`
@@ -155,7 +162,8 @@ scripts/
     render_preview.py        world_graph.json -> playable HTML demo
     bootstrap.sh             environment check + smoke test on the examples
   checks/                    realism layer (see checks/README.md)
-    validate_behavior_rules.py  clean authored behavior rules -> behavior_rules.yaml
+    validate_behavior_rules.py  clean authored behavior rules -> behavior_rules.json/yaml
+    check_behavior_rules.py     run the rules against the simulation (exit 1 = rebuild needed)
 prompts/
   stock_proposal.md  stock_redteam.md  sidecar.md  author_behavior_rules.md
   edge_proposal.md   edge_redteam.md
@@ -178,7 +186,9 @@ smoke-tests the box against the bundled examples before any real game.
 The build pipeline (Phases 0-5) and the mechanical checks (including the dynamic behavior gate) are
 solid and proven on two scenarios (Gordian Knot and Taiwan Strait).
 
-Phase 3b writes and validates `behavior_rules.yaml` (author + `validate_behavior_rules.py`), proven
-on the Taiwan nodes. The step that runs those rules against the simulation and sends a failing graph
-back to be fixed is the next piece being added; until then `behavior_rules.yaml` is produced but not
-yet enforced.
+Phase 3b writes and validates the behavior rules; Phase 5b runs them against the simulation
+(`check_behavior_rules.py`) and flags a high-confidence failure for rebuild. Both are proven on the
+Taiwan graph. Known limit: `should_follow` rules are exercised reliably, but `shouldnt_coexist` rules
+are only exercised as far as random play reaches the extreme states, so a forbidden two-extreme combo
+can be under-tested. Prefer the `should_follow` form for critical couplings; directed stress-testing
+for `shouldnt_coexist` is a planned enhancement.

@@ -189,6 +189,8 @@ def main():
 
     os.makedirs(args.out_dir, exist_ok=True)
     open(os.path.join(args.out_dir, "behavior_rules.yaml"), "w").write(to_yaml(kept))
+    # behavior_rules.json is the machine copy the check step reads (no YAML dependency).
+    json.dump({"rules": kept}, open(os.path.join(args.out_dir, "behavior_rules.json"), "w"), indent=2)
     json.dump({"proposed": len(proposed), "kept": len(kept), "rules": report},
               open(os.path.join(args.out_dir, "behavior_rules_report.json"), "w"), indent=2)
 

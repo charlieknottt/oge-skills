@@ -125,3 +125,24 @@ class Engine:
                         nxt[i] = self._move(nxt[i], amt, i)
             dev.append(nxt)
         return [{i: self.base[i] + d[i] for i in self.ids} for d in dev]
+
+
+# ---------- random decision-stream driver (shared by the behavior gate and the rule check) ----------
+# Each round drops `teams`*`cap` random "landings" of tier*effort*sign on random nodes -- a rough
+# stand-in for the many different ways a game could be played. Deterministic given `rng`.
+TIERS = {"T1": 3, "T2": 6, "T3": 11, "T4": 18}
+TIER_KEYS, TIER_W = ["T1", "T2", "T3", "T4"], [4, 3, 2, 1]
+EFF = [0.6, 1.0, 1.3]
+
+
+def sample_game(eng, rounds, tpr, cap, teams, rng):
+    """One random episode; returns per-round absolute-value states (a list of length `rounds`)."""
+    shocks = {}
+    for r in range(rounds):
+        b = shocks.setdefault(r * tpr, {})
+        for _ in range(teams * cap):
+            i = rng.choice(eng.ids)
+            d = TIERS[rng.choices(TIER_KEYS, weights=TIER_W)[0]] * rng.choice(EFF) * rng.choice([-1, 1])
+            b[i] = b.get(i, 0.0) + d
+    traj = eng.run(shocks, rounds * tpr)
+    return [traj[k * tpr] for k in range(1, rounds + 1)]
