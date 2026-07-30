@@ -1,57 +1,78 @@
 # 2. Data shapes (what the files look like)
 
-The skill writes a few files. This explains each field in plain language. The machine-checkable
-versions are `schemas/graph.schema.json` and `schemas/stocks.schema.json`; working examples are in
-`examples/`.
+The build produces one file that matters most, the **runtime file**, plus a few build-time files
+behind it. This explains each field in plain language. The machine-checkable versions are in
+`schemas/`; working examples are in `examples/`.
 
-## `world_graph.json` — the main file
+One vocabulary, used everywhere:
 
-This is the graph the game uses and the Game Manager approves. It has a list of `nodes` and a list
-of `edges`.
+| Concept | Field | Scale |
+|---|---|---|
+| how hard an edge pushes | `strength` | 0-1 |
+| which way it pushes | `sign` | `+` / `-` |
+| a node's resting value | `baseline` | 0-1 |
+| a node's live value in play | `current_value` | 0-1 |
+
+## `<slug>.runtime.json` — the play-ready file
+
+This is the single file the game and the graph-**update** skill read. It merges each node's
+behavior, its stock detail, and its live value into one object, and seeds the runtime state. It is on
+the 0-1 scale, with the engine constants stamped in. Schema: `schemas/runtime_graph.schema.json`.
+The physics that reads it: `guide/4-the-engine.md`.
 
 ```json
 {
-  "scenario": "gordian_knot",
-  "version": "1.0",
+  "scenario": "gordian_knot", "version": "1", "round": 0, "tick": 0,
+  "engine": { "scale_min": 0, "scale_max": 1, "sat_a": 0.38, "speed": 0.7, "ticks_per_round": 6,
+              "rates": { "Level": [0.12, 0.22], "Accumulator": [0.06, 0.13],
+                         "Drifter": [0.10, 0.18], "Lever": [0.0, 0.0] } },
   "nodes": [
-    { "id": "tariff_level", "label": "Tariff Level", "category": "Levers",
-      "type": "Lever", "starting_value": 30, "inverted": false }
+    { "id": "semi_supply", "label": "Semiconductor Supply", "category": "Supply",
+      "type": "Level", "stock_type": "service-level", "pmesii": "Infrastructure",
+      "inverted": false, "baseline": 0.6, "current_value": 0.6,
+      "measures": "share of certified supply", "rationale": "the central scarcity" }
   ],
   "edges": [
-    { "id": "e_tariff_price", "source": "tariff_level", "target": "price_stability",
-      "sign": "-", "magnitude": 0.6, "lag": 2,
-      "mechanism": "Tariffs on Chinese components raise input costs, which pushes consumer prices up." }
+    { "id": "e_tariff_semi_supply", "source": "tariff_level", "target": "semi_supply",
+      "sign": "-", "strength": 0.6, "lag": 2, "lag_ticks_elapsed": 0,
+      "mechanism": "Tariffs raise input costs, which crimps supply." }
   ]
 }
 ```
 
-**Each node has:**
+**Each node has** (the engine reads only `type`, `inverted`, `baseline`, `current_value`; the rest is
+descriptive):
 
 | Field | Meaning |
 |---|---|
-| `id` | short unique name, lowercase with underscores (e.g. `tariff_level`) |
+| `id` | short unique name, lowercase with underscores; the one id space (a node is its own stock detail) |
 | `label` | the human-readable name |
-| `category` | a grouping for display (e.g. Levers, Supply, Outcomes). This is a free label, not the PMESII-P dimension. |
-| `type` | the behavior: `Level`, `Lever`, `Accumulator`, or `Drifter` (see guide 1) |
-| `starting_value` | where it starts on the 0-100 scale |
-| `inverted` | `true` when a low value is the good state (a threat or compromise node) |
+| `category` | a display grouping (Levers, Supply, Outcomes). A free label, not the PMESII-P dimension. |
+| `type` | the behavior: `Level`, `Lever`, `Accumulator`, or `Drifter` (guide 1) |
+| `stock_type` | the finer class the behavior is derived from (guide 1) |
+| `pmesii` | which of the 7 dimensions it belongs to |
+| `inverted` | `true` when a low value is the good state. Load-bearing in the engine (guide 4), not just a label. |
+| `baseline` | its resting value on 0-1 |
+| `current_value` | its live value on 0-1; seeded to `baseline` at package time; the only node field the update skill writes |
+| `measures`, `unit`, `rationale`, `increases_when`, `decreases_when` | descriptive detail |
 
 **Each edge has:**
 
 | Field | Meaning |
 |---|---|
 | `id` | unique name starting with `e_` |
-| `source` | the node doing the pushing |
-| `target` | the node being pushed |
+| `source` / `target` | the node doing the pushing / being pushed |
 | `sign` | `+` (same direction) or `-` (opposite) |
-| `magnitude` | strength, a number from 0 to 1 (see below) |
-| `lag` | delay in steps before the effect lands; 6 steps = 1 round (0-1 immediate, 2-3 short, 6+ multi-round) |
-| `mechanism` | one specific sentence saying why the source moves the target. Vague filler ("affects", "impacts") gets rejected in review. |
+| `strength` | how hard, a number 0-1 (see below); the direction is in `sign`, not here |
+| `lag` | delay in ticks before the effect lands; 6 ticks = 1 round (0-1 immediate, 2-3 short, 6+ multi-round) |
+| `lag_ticks_elapsed` | the runtime counter of ticks of history; seeded 0 |
+| `mechanism` | one specific sentence saying why the source moves the target |
 
-### Edge magnitude is a 0-1 number
+### Edge strength is a 0-1 number
 
-Magnitude is a **discrete number between 0 and 1**, chosen when the graph is built. Use these
-bands as a guide:
+Strength is a **discrete number between 0 and 1**, chosen when the graph is built. It is a gain, not a
+value on the node scale. Use these bands as a guide, but pick a specific value (e.g. `0.6`), not a
+band:
 
 | Feel | Number |
 |---|---|
@@ -59,57 +80,35 @@ bands as a guide:
 | moderate | about 0.5-0.7 |
 | strong | about 0.8-1.0 |
 
-Pick a specific value (e.g. `0.6`), not a band. The number is used directly as the weight of the
-source's push on the target. (This replaced the old `weak`/`moderate`/`strong` labels so the
-graph-creation and graph-update skills share one format.)
+## The build-time files (behind the runtime file)
 
-## `stocks.json` — the detailed model behind each node
+`world_graph.json` is the graph before runtime state is seeded (nodes + edges, same fields as above
+minus `current_value` and `lag_ticks_elapsed`). `package_runtime.py` seeds those and stamps the
+`engine` block to make the runtime file.
 
-This is the fuller model with all the research metadata. It feeds the sidecar. Each node in
-`world_graph.json` has a matching stock here.
+`stocks.json` is the detailed stock model that feeds the sidecar. It authors the resting value on a
+**0-1** scale as `node_value`:
 
 ```json
-{
-  "id": "safe_supply", "name": "Safe Semiconductor Supply", "pmesii": "Infrastructure",
-  "measures": "share of certified, uncompromised chips in the supply", "unit": "index 0-1",
-  "node_value": 0.42,
-  "increases_when": "domestic capacity comes online; trusted allies expand output",
-  "decreases_when": "a compromise is discovered; an ally cuts exports",
-  "rationale": "the central scarcity the whole scenario turns on",
-  "inverted": false, "stock_type": "upstream-access", "sector": "Semiconductors"
-}
+{ "id": "semi_supply", "name": "Semiconductor Supply", "pmesii": "Infrastructure",
+  "measures": "share of certified supply", "unit": "index 0-1", "node_value": 0.60,
+  "increases_when": "domestic capacity comes online", "decreases_when": "a compromise is found",
+  "rationale": "the central scarcity", "inverted": false, "stock_type": "service-level" }
 ```
 
-| Field | Meaning |
-|---|---|
-| `id`, `name` | the same id as the graph node, plus a longer name |
-| `pmesii` | which of the 7 dimensions it belongs to |
-| `measures`, `unit` | what it concretely measures, and its unit |
-| `node_value` | the starting value on the **0-1** scale |
-| `increases_when`, `decreases_when` | plain descriptions of what moves it up and down |
-| `rationale` | why this node exists |
-| `inverted` | same meaning as on the graph node |
-| `stock_type` | one of the 9 stock types (guide 1); the node's behavior is derived from this |
-| `sector` | optional free-text grouping |
+### `node_value` and `baseline` are the same number
 
-### Two scales, on purpose
-
-- The **stock** file uses `node_value` on a **0-1** scale.
-- The **graph** file uses `starting_value` on a **0-100** scale.
-- They are the same number: `starting_value = node_value × 100`.
-
-The stock file uses `node_value` because that is the field name the graph-**update** skill uses,
-so the two skills read each other's stocks without translation. The extra fields the creation side
-needs (`inverted`, `stock_type`) are just ignored by the update side.
+The stock model authors the resting value as `node_value`; the runtime file calls it `baseline`. Both
+are on the 0-1 scale and hold the same number, so `build_nodes.py` copies one to the other. `node_value`
+is the stock-model name; `baseline` is the name on the node in the graph and runtime files.
 
 ## `qualitative_sidecar.md` — the plain-text context
 
-Prose, one section per sidecar question (guide 1). Written once, locked when the game starts.
-Holds the ground-truth knowledge state (including secrets, since players never see it).
+Prose, one section per sidecar question (guide 1). Written once, locked when the game starts. Holds
+the ground-truth knowledge state (including secrets, since players never see it).
 
 ## The audit trail
 
-Two files that let the Game Manager trace every choice:
-
-- `validation_report.json` — every automatic check and whether it passed, with reasons.
+- `stock_review.md`, `edge_review.md` — the two review sheets a human can accept or reject.
+- `validation_report.json` — every automatic check and whether it passed.
 - `generation_log.md` — the reason behind each node and edge.

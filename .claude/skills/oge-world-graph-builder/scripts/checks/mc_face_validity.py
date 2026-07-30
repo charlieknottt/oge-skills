@@ -38,21 +38,19 @@ import sys
 
 # ---------------- engine (compact port of the preview physics) ----------------
 SPEED = 0.7
-SAT_A = 38.0
-MINV, MAXV = 0.0, 100.0
+SAT_A = 0.38
+MINV, MAXV = 0.0, 1.0
 RATES = {"Lever": (0.0, 0.0), "Level": (0.12, 0.22),
          "Accumulator": (0.06, 0.13), "Drifter": (0.10, 0.18)}
-def mag_weight(m):
-    # magnitude is a number in [0, 1]; tolerate the legacy weak/moderate/strong strings.
-    if isinstance(m, (int, float)):
-        return float(m)
-    return {"weak": 0.35, "moderate": 0.6, "strong": 0.9}.get(m, 0.6)
+def edge_gain(s):
+    # strength is a number in [0, 1]
+    return float(s) if isinstance(s, (int, float)) and not isinstance(s, bool) else 0.6
 
 
 class Engine:
     """Deterministic propagation over a world graph. State is tracked as deviation from baseline;
-    absolute value = base + dev, held in [0,100]. Optional rail resistance attenuates movement
-    toward a 0/100 rail (rail_zone=0 => plain hard clamp, matching the preview)."""
+    absolute value = base + dev, held in [0,1]. Optional rail resistance attenuates movement
+    toward a 0/1 rail (rail_zone=0 => plain hard clamp, matching the preview)."""
 
     def __init__(self, graph, rail_zone=0.0, rail_power=1.0):
         self.rail_zone = float(rail_zone)
@@ -63,7 +61,7 @@ class Engine:
         self.base, self.aup, self.adn, self.want, self.type = {}, {}, {}, {}, {}
         for n in nodes:
             au, ad = RATES.get(n["type"], RATES["Level"])
-            self.base[n["id"]] = float(n["starting_value"])
+            self.base[n["id"]] = float(n["baseline"])
             self.aup[n["id"]] = au * SPEED
             self.adn[n["id"]] = ad * SPEED
             self.want[n["id"]] = not bool(n.get("inverted"))
@@ -71,7 +69,7 @@ class Engine:
         self.incoming = {i: [] for i in self.ids}
         for e in graph["edges"]:
             if e["source"] in by_id and e["target"] in by_id:
-                w = mag_weight(e.get("magnitude", 0.6)) * (1 if e.get("sign", "+") == "+" else -1)
+                w = edge_gain(e.get("strength", 0.6)) * (1 if e.get("sign", "+") == "+" else -1)
                 self.incoming[e["target"]].append((e["source"], w, int(e.get("lag", 1))))
 
     def _move(self, dev_val, delta, i):
@@ -127,7 +125,7 @@ class Engine:
 
 
 # ---------------- random decision-stream generator ----------------
-TIERS = {"T1": 3, "T2": 6, "T3": 11, "T4": 18}
+TIERS = {"T1": 0.03, "T2": 0.06, "T3": 0.11, "T4": 0.18}
 TIER_KEYS, TIER_W = ["T1", "T2", "T3", "T4"], [4, 3, 2, 1]
 EFF = [0.6, 1.0, 1.3]
 
@@ -244,13 +242,13 @@ def scanners(eng, games, cfg):
     checks = []
     ids = eng.ids
     N = len(games)
-    # rail-hit rate per node (value within 1 of a 0/100 rail in any round of a run)
+    # rail-hit rate per node (value within 0.01 of a 0/1 rail in any round of a run)
     hit = {i: 0 for i in ids}
     for run in games:
         seen = set()
         for st in run:
             for i in ids:
-                if i not in seen and (st[i] <= 1.0 or st[i] >= 99.0):
+                if i not in seen and (st[i] <= 0.01 or st[i] >= 0.99):
                     seen.add(i)
         for i in seen:
             hit[i] += 1
@@ -263,12 +261,12 @@ def scanners(eng, games, cfg):
                       f"<= {thr}", worst_rate <= thr,
                       f"{len(offenders)} nodes exceed {thr}: " + ", ".join(f"{i}={r}" for i, r in offenders[:8]),
                       warn=True))
-    # dead nodes: never move > 5 from baseline in ANY run
+    # dead nodes: never move > 0.05 from baseline in ANY run
     moved = {i: False for i in ids}
     for run in games:
         for st in run:
             for i in ids:
-                if abs(st[i] - eng.base[i]) > 5.0:
+                if abs(st[i] - eng.base[i]) > 0.05:
                     moved[i] = True
     dead = [i for i in ids if not moved[i]]
     checks.append(_mk("dead_nodes", "count", len(dead), "0", len(dead) == 0,
@@ -288,7 +286,7 @@ def scanners(eng, games, cfg):
     for run in games:
         for st in run:
             for v in st.values():
-                if v != v or v < -1e-6 or v > 100 + 1e-6:
+                if v != v or v < -1e-6 or v > 1 + 1e-6:
                     oob += 1
     checks.append(_mk("boundedness", "violations", oob, "0", oob == 0,
                       "no out-of-bounds" if oob == 0 else f"{oob} out-of-bounds values"))

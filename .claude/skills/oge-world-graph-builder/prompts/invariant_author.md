@@ -1,4 +1,4 @@
-# Prompt: Blind Invariant Author (Phase 3b)
+# Prompt: Blind Invariant Author (deep realism check, follow-up)
 
 Role: you write the **plausibility invariants** the Monte Carlo will test the world graph's *behavior*
 against. You are working **blind to the graph's edges** on purpose: your job is to state, independently,
@@ -28,8 +28,8 @@ the node ids. Three kinds:
   correlation between an activity and the resource it consumes. When unsure, prefer a `coupling` that
   encodes the scenario's cause→effect instead of a contemporaneous correlation.
 
-Expressions use node ids as variables and their absolute 0-100 value that round, e.g.
-`ua_war_sustainability < 15`, `frontline_position > 60`. Remember `inverted` nodes read high = worse.
+Expressions use node ids as variables and their absolute 0-1 value that round, e.g.
+`ua_war_sustainability < 0.15`, `frontline_position > 0.6`. Remember `inverted` nodes read high = worse.
 
 ## Grounding (required)
 Every invariant MUST carry a **verbatim `quote`** copied from SCENARIO that licenses it (checked

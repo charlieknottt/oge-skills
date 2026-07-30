@@ -1,6 +1,33 @@
 {
   "scenario": "gordian_knot",
-  "version": "1.0",
+  "version": "1",
+  "round": 0,
+  "tick": 0,
+  "engine": {
+    "scale_min": 0,
+    "scale_max": 1,
+    "sat_a": 0.38,
+    "speed": 0.7,
+    "ticks_per_round": 6,
+    "rates": {
+      "Level": [
+        0.12,
+        0.22
+      ],
+      "Accumulator": [
+        0.06,
+        0.13
+      ],
+      "Drifter": [
+        0.1,
+        0.18
+      ],
+      "Lever": [
+        0.0,
+        0.0
+      ]
+    }
+  },
   "nodes": [
     {
       "id": "tariff_level",
@@ -8,7 +35,10 @@
       "category": "Levers",
       "type": "Lever",
       "inverted": false,
-      "baseline": 0.3
+      "pmesii": "Economic",
+      "stock_type": "policy-lever",
+      "baseline": 0.3,
+      "current_value": 0.3
     },
     {
       "id": "export_controls",
@@ -16,7 +46,10 @@
       "category": "Levers",
       "type": "Lever",
       "inverted": false,
-      "baseline": 0.3
+      "pmesii": "Economic",
+      "stock_type": "policy-lever",
+      "baseline": 0.3,
+      "current_value": 0.3
     },
     {
       "id": "disclosure_posture",
@@ -24,7 +57,10 @@
       "category": "Levers",
       "type": "Lever",
       "inverted": false,
-      "baseline": 0.5
+      "pmesii": "Information",
+      "stock_type": "policy-lever",
+      "baseline": 0.5,
+      "current_value": 0.5
     },
     {
       "id": "cyber_posture",
@@ -32,7 +68,10 @@
       "category": "Levers",
       "type": "Lever",
       "inverted": false,
-      "baseline": 0.4
+      "pmesii": "Military",
+      "stock_type": "policy-lever",
+      "baseline": 0.4,
+      "current_value": 0.4
     },
     {
       "id": "semi_buildout",
@@ -40,7 +79,10 @@
       "category": "Buildouts",
       "type": "Accumulator",
       "inverted": false,
-      "baseline": 0.2
+      "pmesii": "Economic",
+      "stock_type": "buildout",
+      "baseline": 0.2,
+      "current_value": 0.2
     },
     {
       "id": "battery_buildout",
@@ -48,7 +90,10 @@
       "category": "Buildouts",
       "type": "Accumulator",
       "inverted": false,
-      "baseline": 0.2
+      "pmesii": "Economic",
+      "stock_type": "buildout",
+      "baseline": 0.2,
+      "current_value": 0.2
     },
     {
       "id": "power_buildout",
@@ -56,7 +101,10 @@
       "category": "Buildouts",
       "type": "Accumulator",
       "inverted": false,
-      "baseline": 0.2
+      "pmesii": "Economic",
+      "stock_type": "buildout",
+      "baseline": 0.2,
+      "current_value": 0.2
     },
     {
       "id": "optics_buildout",
@@ -64,7 +112,10 @@
       "category": "Buildouts",
       "type": "Accumulator",
       "inverted": false,
-      "baseline": 0.2
+      "pmesii": "Economic",
+      "stock_type": "buildout",
+      "baseline": 0.2,
+      "current_value": 0.2
     },
     {
       "id": "semi_compromise",
@@ -72,7 +123,10 @@
       "category": "Compromise",
       "type": "Drifter",
       "inverted": true,
-      "baseline": 0.1
+      "pmesii": "Infrastructure",
+      "stock_type": "scheduled-threat",
+      "baseline": 0.1,
+      "current_value": 0.1
     },
     {
       "id": "battery_compromise",
@@ -80,7 +134,10 @@
       "category": "Compromise",
       "type": "Drifter",
       "inverted": true,
-      "baseline": 0.1
+      "pmesii": "Infrastructure",
+      "stock_type": "scheduled-threat",
+      "baseline": 0.1,
+      "current_value": 0.1
     },
     {
       "id": "power_compromise",
@@ -88,7 +145,10 @@
       "category": "Compromise",
       "type": "Drifter",
       "inverted": true,
-      "baseline": 0.1
+      "pmesii": "Infrastructure",
+      "stock_type": "scheduled-threat",
+      "baseline": 0.1,
+      "current_value": 0.1
     },
     {
       "id": "optics_compromise",
@@ -96,7 +156,10 @@
       "category": "Compromise",
       "type": "Drifter",
       "inverted": true,
-      "baseline": 0.1
+      "pmesii": "Infrastructure",
+      "stock_type": "scheduled-threat",
+      "baseline": 0.1,
+      "current_value": 0.1
     },
     {
       "id": "semi_supply",
@@ -104,7 +167,10 @@
       "category": "Supply",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Infrastructure",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "battery_supply",
@@ -112,7 +178,10 @@
       "category": "Supply",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Infrastructure",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "power_supply",
@@ -120,7 +189,10 @@
       "category": "Supply",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Infrastructure",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "optics_supply",
@@ -128,7 +200,10 @@
       "category": "Supply",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Infrastructure",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "grid_service",
@@ -136,7 +211,10 @@
       "category": "Infrastructure",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Infrastructure",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "telecom_service",
@@ -144,7 +222,10 @@
       "category": "Infrastructure",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Infrastructure",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "military_readiness",
@@ -152,7 +233,10 @@
       "category": "Infrastructure",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Military",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "price_stability",
@@ -160,7 +244,10 @@
       "category": "Economy",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Economic",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "us_china_relations",
@@ -168,7 +255,10 @@
       "category": "Economy",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Political",
+      "stock_type": "trust-sentiment",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "economic_stability",
@@ -176,7 +266,10 @@
       "category": "Economy",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Economic",
+      "stock_type": "service-level",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "market_confidence",
@@ -184,7 +277,10 @@
       "category": "Economy",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.6
+      "pmesii": "Economic",
+      "stock_type": "trust-sentiment",
+      "baseline": 0.6,
+      "current_value": 0.6
     },
     {
       "id": "public_trust",
@@ -192,7 +288,10 @@
       "category": "Outcomes",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.55
+      "pmesii": "Social",
+      "stock_type": "trust-sentiment",
+      "baseline": 0.55,
+      "current_value": 0.55
     },
     {
       "id": "allied_trust",
@@ -200,7 +299,10 @@
       "category": "Outcomes",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.55
+      "pmesii": "Political",
+      "stock_type": "trust-sentiment",
+      "baseline": 0.55,
+      "current_value": 0.55
     },
     {
       "id": "allied_supply_pool",
@@ -208,7 +310,10 @@
       "category": "Pool",
       "type": "Level",
       "inverted": false,
-      "baseline": 0.4
+      "pmesii": "Economic",
+      "stock_type": "zero-sum-pool",
+      "baseline": 0.4,
+      "current_value": 0.4
     }
   ],
   "edges": [
@@ -219,7 +324,8 @@
       "sign": "-",
       "lag": 2,
       "mechanism": "Tariffs on Chinese-origin components raise input costs, pressuring consumer prices for electronics, EVs, and industrial goods",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_tariff_relations",
@@ -228,7 +334,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Tariff escalation signals confrontational posture, triggering PRC counter-measures and worsening bilateral relations",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_tariff_pool",
@@ -237,7 +344,8 @@
       "sign": "+",
       "lag": 3,
       "mechanism": "Tariffs on Chinese supply create market incentive for allied-certified alternatives, gradually expanding the certified pool",
-      "strength": 0.35
+      "strength": 0.35,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_exports_relations",
@@ -246,7 +354,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Technology export controls signal strategic decoupling intent, triggering PRC retaliation and diplomatic deterioration",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_exports_semi_buildout",
@@ -255,7 +364,8 @@
       "sign": "+",
       "lag": 6,
       "mechanism": "Controls on Chinese semiconductor technology incentivize domestic investment to close the supply gap over time",
-      "strength": 0.35
+      "strength": 0.35,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_exports_allied_trust",
@@ -264,7 +374,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Coordinated multilateral export controls strengthen the allied coalition and signal credible long-term commitment",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_disclosure_public_trust",
@@ -273,7 +384,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Government transparency about the compromise threat builds public confidence in the competence and honesty of crisis management",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_disclosure_market",
@@ -282,7 +394,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Public disclosure of widespread embedded compromise causes immediate market panic and investor confidence collapse",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_disclosure_relations",
@@ -291,7 +404,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Public attribution of PRC compromise triggers diplomatic escalation and PRC retaliation threat",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_disclosure_allied_trust",
@@ -300,7 +414,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Sharing intelligence with allies builds coalition confidence and aligns threat assessment across the partnership",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_cyber_semi",
@@ -309,7 +424,8 @@
       "sign": "-",
       "lag": 3,
       "mechanism": "Improved cyber defenses degrade PRC's ability to maintain command paths to embedded semiconductor logic",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_cyber_optics",
@@ -318,7 +434,8 @@
       "sign": "-",
       "lag": 3,
       "mechanism": "Cyber posture improvements disrupt embedded optics surveillance channels and degrade PRC remote kill-switch capability",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_cyber_military",
@@ -327,7 +444,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Stronger counterintelligence posture reduces compromise penetration in DoD C5ISR platforms and communication systems",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_pool_semi",
@@ -336,7 +454,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Certified allied semiconductor supply directly allocated to civilian and defense demand when teams commit the pool",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_pool_battery",
@@ -345,7 +464,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Allied battery cell and pack supply flows to energy storage demand when allocated from the certified pool",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_pool_power",
@@ -354,7 +474,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Allied power electronics and grid hardware supply flows to infrastructure demand when allocated from the pool",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_pool_optics",
@@ -363,7 +484,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Allied optical component supply flows to network infrastructure demand when allocated from the certified pool",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_allied_trust_pool",
@@ -372,7 +494,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Allied cohesion determines willingness to divert certified supply, expand certified lines, and resist PRC counter-inducements",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_semi_buildout_supply",
@@ -381,7 +504,8 @@
       "sign": "+",
       "lag": 6,
       "mechanism": "Domestic and allied packaging capacity coming online after the build period provides a US-controlled semiconductor supply stream",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_battery_buildout_supply",
@@ -390,7 +514,8 @@
       "sign": "+",
       "lag": 6,
       "mechanism": "Domestic gigafactory capacity coming online provides battery supply independent of Chinese cells after the full build period",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_power_buildout_supply",
@@ -399,7 +524,8 @@
       "sign": "+",
       "lag": 6,
       "mechanism": "Domestic power electronics and grid hardware manufacturing capacity online reduces dependency on the allied certified pool",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_optics_buildout_supply",
@@ -408,7 +534,8 @@
       "sign": "+",
       "lag": 6,
       "mechanism": "Domestic optical component assembly capacity online provides trusted network hardware supply independent of the allied pool",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_semi_comp_military",
@@ -417,7 +544,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Compromised packaged semiconductors in C5ISR platforms create covert degradation risk and kill-switch exposure in DoD systems",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_battery_comp_grid",
@@ -426,7 +554,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Compromised battery management systems create thermal-runaway and remote-shutdown risk in grid-connected energy storage",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_battery_comp_military",
@@ -435,7 +564,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Compromised batteries in DoD platforms \u2014 drones, ground vehicles, ships \u2014 introduce sabotage risk at go-code",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_power_comp_grid",
@@ -444,7 +574,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Compromised smart inverters and grid control hardware expose the bulk power system to coordinated remote disruption",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_optics_comp_telecom",
@@ -453,7 +584,8 @@
       "sign": "-",
       "lag": 1,
       "mechanism": "Compromised optical components enable passive collection of all network traffic and active kill-switch capability against broadband",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_semi_supply_comp",
@@ -462,7 +594,8 @@
       "sign": "-",
       "lag": 3,
       "mechanism": "Certified semiconductor supply displacing Chinese-origin components in new deployments gradually reduces the compromised installed base",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_semi_supply_price",
@@ -471,7 +604,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Adequate semiconductor supply prevents shortage-driven price spikes in electronics, vehicles, and industrial goods",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_battery_supply_comp",
@@ -480,7 +614,8 @@
       "sign": "-",
       "lag": 3,
       "mechanism": "Safe battery supply in new deployments gradually displaces compromised cells and reduces the installed compromised battery base",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_battery_supply_price",
@@ -489,7 +624,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Battery supply security prevents EV and energy storage price surges that drive consumer price pain",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_power_supply_comp",
@@ -498,7 +634,8 @@
       "sign": "-",
       "lag": 3,
       "mechanism": "Certified power electronics displacing Chinese-origin inverters and grid hardware reduces the compromised control-layer fraction",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_power_supply_grid",
@@ -507,7 +644,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Certified inverters, transformers, and switchgear are the primary inputs to grid reliability and reserve margin",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_optics_supply_comp",
@@ -516,7 +654,8 @@
       "sign": "-",
       "lag": 3,
       "mechanism": "Certified optical modules displacing Chinese-origin transceivers reduce the compromised network footprint as infrastructure is refreshed",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_optics_supply_telecom",
@@ -525,7 +664,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Certified optical components are the primary physical inputs to network integrity and broadband reliability",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_grid_economic",
@@ -534,7 +674,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Grid reliability enables industrial and commercial activity; grid disruption cascades into GDP, logistics, and supply chain",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_grid_public_trust",
@@ -543,7 +684,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Visible grid stability signals competent government management and prevents constituency backlash from outages",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_telecom_economic",
@@ -552,7 +694,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Network integrity protects financial transactions, cloud services, and data flows critical to modern economic activity",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_military_relations",
@@ -561,7 +704,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "High military readiness signals credible deterrence, reducing PRC willingness to escalate or activate compromise",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_price_economic",
@@ -570,7 +714,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Consumer and industrial price stability signals a manageable transition and sustains household spending and economic confidence",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_price_public_trust",
@@ -579,7 +724,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Affordable consumer prices sustain public trust in the feasibility and fairness of the managed unwind from Chinese supply",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_relations_allied_trust",
@@ -588,7 +734,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Stable US-China relations reduce PRC pressure and ally-splitting inducements, enabling allied coalition cohesion",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_relations_pool",
@@ -597,7 +744,8 @@
       "sign": "+",
       "lag": 3,
       "mechanism": "Improved US-China relations reduce PRC campaigns to squeeze allied supply sources, allowing more certified supply to flow to US",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_relations_market",
@@ -606,7 +754,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "US-China stability directly shapes investor confidence in supply chain continuity and trade predictability",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_economic_market",
@@ -615,7 +764,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Macroeconomic stability underpins investor confidence; deteriorating fundamentals drive market confidence collapse",
-      "strength": 0.9
+      "strength": 0.9,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_economic_public_trust",
@@ -624,7 +774,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Economic stability reinforces public trust in the government's ability to manage the crisis without lasting harm",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_market_economic",
@@ -633,7 +784,8 @@
       "sign": "+",
       "lag": 1,
       "mechanism": "Market confidence sustains investment flows and business activity in a self-reinforcing feedback loop",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_market_price",
@@ -642,7 +794,8 @@
       "sign": "+",
       "lag": 2,
       "mechanism": "Market confidence reduces speculative panic buying and supply hoarding that drives price spikes during the transition",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_market_semi_buildout",
@@ -651,7 +804,8 @@
       "sign": "+",
       "lag": 3,
       "mechanism": "High market confidence unlocks private capital investment in domestic semiconductor packaging and manufacturing",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     },
     {
       "id": "e_market_battery_buildout",
@@ -660,7 +814,8 @@
       "sign": "+",
       "lag": 3,
       "mechanism": "Market confidence in the managed supply transition attracts private capital to domestic battery manufacturing",
-      "strength": 0.6
+      "strength": 0.6,
+      "lag_ticks_elapsed": 0
     }
   ]
 }

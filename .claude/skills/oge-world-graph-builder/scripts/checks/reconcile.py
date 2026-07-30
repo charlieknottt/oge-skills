@@ -21,7 +21,7 @@ Auto-apply rails (ALL required; from the approved plan):
   2) the fix is grounded (a verify_quotes-verified scenario quote accompanies it),
   3) a deterministic cross-check agrees (mechanism_audit isolated-sign for a sign flip),
   4) re-running mc_face_validity after the fix introduces no NEW invariant failure.
-Hard exclusions (always human): magnitude, lag, missing edges, and invariant-naive/underspecified/ambiguous.
+Hard exclusions (always human): strength, lag, missing edges, and invariant-naive/underspecified/ambiguous.
 """
 import argparse
 import json
@@ -90,6 +90,14 @@ def causal_slice(graph, A, B, max_depth=3):
     return sorted(eids)
 
 
+def driver_edges(graph, nodes):
+    """Incoming edges of `nodes` — the direct drivers. For a pointwise invariant (a single node out
+    of its plausible band) the suspects are what feeds that node, not a path from it back to itself
+    (which a simple no-revisit search can never find)."""
+    tset = set(n for n in nodes if n)
+    return sorted({e["id"] for e in graph["edges"] if e["target"] in tset})
+
+
 def build(args):
     graph = json.load(open(args.graph))
     all_ids = [n["id"] for n in graph["nodes"]]
@@ -105,7 +113,9 @@ def build(args):
         inv = invs.get(c["id"])
         if inv:
             A, B = invariant_nodes(inv, all_ids)
-            slice_ids = causal_slice(graph, A, B)
+            # pointwise = one node's own band; its suspects are its incoming drivers. coupling/
+            # correlation span two node sets, so the suspects are the edges on the path between them.
+            slice_ids = driver_edges(graph, A) if inv.get("kind") == "pointwise" else causal_slice(graph, A, B)
         else:
             A = B = []
             slice_ids = []
@@ -113,7 +123,7 @@ def build(args):
             "check_id": c["id"], "status": c["status"], "metric": c.get("metric"),
             "value": c.get("value"), "threshold": c.get("threshold"), "evidence": c.get("evidence"),
             "invariant": inv, "node_sets": [A, B],
-            "slice": [{k: edge_by_id[eid].get(k) for k in ("id", "source", "target", "sign", "magnitude", "lag", "mechanism")}
+            "slice": [{k: edge_by_id[eid].get(k) for k in ("id", "source", "target", "sign", "strength", "lag", "mechanism")}
                       for eid in slice_ids if eid in edge_by_id],
             "no_path": len(slice_ids) == 0,
         })
@@ -121,7 +131,7 @@ def build(args):
     os.makedirs(args.out_dir, exist_ok=True)
     json.dump({"packets": packets}, open(os.path.join(args.out_dir, "reconcile_packets.json"), "w"), indent=2)
     _emit_workflow(packets, os.path.join(args.out_dir, "reconcile_workflow.js"), args.model,
-                   open(os.path.join(os.path.dirname(__file__), "..", "prompts", "reconcile_invariant.md")).read())
+                   open(os.path.join(os.path.dirname(__file__), "..", "..", "prompts", "reconcile_invariant.md")).read())
     print(f"built {len(packets)} reconciliation packet(s) -> {args.out_dir}")
     for p in packets:
         print(f"  {p['check_id']}: {p['status']}  slice={len(p['slice'])} edges"
@@ -136,13 +146,13 @@ const SCHEMA = { type:'object', required:['check_id','disposition','reasoning'],
   check_id:{type:'string'},
   disposition:{type:'string', enum:['edge-defect','missing-edge','invariant-naive','invariant-underspecified','ambiguous']},
   edge_id:{type:['string','null']},
-  proposed_fix:{ type:['object','null'], additionalProperties:false, properties:{ field:{type:'string', enum:['sign','magnitude','lag','mechanism']}, to:{type:'string'} } },
+  proposed_fix:{ type:['object','null'], additionalProperties:false, properties:{ field:{type:'string', enum:['sign','strength','lag','mechanism']}, to:{type:'string'} } },
   grounding_quote:{type:['string','null']},
   proposed_invariant_amendment:{type:['string','null']},
   reasoning:{type:'string'} } };
 phase('Reconcile');
 const res = await parallel(PACKETS.map(p => () => {
-  const sliceTxt = p.slice.map(e=>`- ${e.id}: ${e.source} --(${e.sign},${e.magnitude},lag ${e.lag})--> ${e.target} :: ${e.mechanism}`).join('\n') || '(no edges on any causal path between the invariant nodes — a missing edge is likely)';
+  const sliceTxt = p.slice.map(e=>`- ${e.id}: ${e.source} --(${e.sign},${e.strength},lag ${e.lag})--> ${e.target} :: ${e.mechanism}`).join('\n') || '(no edges on any causal path between the invariant nodes — a missing edge is likely)';
   const prompt = `${PROMPT}\n\n===== FAILED CHECK =====\nid: ${p.check_id}\nstatus: ${p.status}\nmetric ${p.metric} = ${p.value} (threshold ${p.threshold})\nevidence: ${p.evidence}\ninvariant: ${JSON.stringify(p.invariant)}\n\n===== CANDIDATE EDGES ON THE CAUSAL PATH =====\n${sliceTxt}`;
   return agent(prompt, { label:`reconcile:${p.check_id}`, phase:'Reconcile', schema:SCHEMA, model:MODEL, effort:'high' }).then(r=>({check_id:p.check_id, adjudication:r}));
 }));
@@ -177,8 +187,8 @@ def _isolated_sign_ok(graph_obj, edge, expected_sign):
     eng = M.Engine(mini, rail_zone=0.0, rail_power=1.0)
     t, b = edge["target"], None
     b = eng.base[t]
-    up = eng.run({0: {edge["source"]: 25}}, 40)[-1][t] - b
-    dn = eng.run({0: {edge["source"]: -25}}, 40)[-1][t] - b
+    up = eng.run({0: {edge["source"]: 0.25}}, 40)[-1][t] - b
+    dn = eng.run({0: {edge["source"]: -0.25}}, 40)[-1][t] - b
     exp = 1 if expected_sign == "+" else -1
     return (abs(up) > 1e-6 and (1 if up > 0 else -1) == exp and
             abs(dn) > 1e-6 and (1 if dn > 0 else -1) == -exp)
@@ -227,7 +237,7 @@ def apply(args):
             field = fix.get("field")
             # AUTO-APPLY is confined to SIGN fixes: it is the only class that is BOTH calibration-trusted
             # AND has a deterministic verifier (isolated-sign fidelity). Mechanism rewrites are trusted by
-            # calibration but have no deterministic check, so they go to the human; magnitude/lag are
+            # calibration but have no deterministic check, so they go to the human; strength/lag are
             # calibration-uncovered and excluded outright.
             trusted = coverage.get("flipped_sign") == "trusted"
             grounded = bool(scen_norm and a.get("grounding_quote") and verify_quote(a["grounding_quote"], scen_norm))
@@ -247,7 +257,7 @@ def apply(args):
                     reason = "AUTO-APPLIED: trusted sign class, grounded, sign-fidelity OK, no new MC failure"
                     change_log.append({"check_id": cid, "edge_id": a["edge_id"], "field": field,
                                        "from": before, "to": fix["to"], "rails": rails,
-                                       "grounding_quote": a.get("grounding_quote")})
+                                       "basis": reason, "grounding_quote": a.get("grounding_quote")})
                 else:
                     edge_by_id[a["edge_id"]][field] = before  # REVERT
                     reason = (f"NOT auto-applied (reverted): rail3_sign_fidelity="

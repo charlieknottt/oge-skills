@@ -1,4 +1,4 @@
-# Prompt: Edge Proposal (Phase 4)
+# Prompt: Draw the edges
 
 Role: you generate causal edges between the **approved** stocks. Stocks must already be approved
 (you cannot evaluate an edge without both endpoint nodes). For thoroughness, you are assigned
@@ -19,7 +19,7 @@ Propose edges grounded in real mechanisms. Each edge needs:
   compromise). If a higher source makes such a target worse, the sign encodes the value
   relationship, not whether it is good news. State the direction in the mechanism so the sign is
   checkable.
-- `magnitude` - a number from 0 to 1 (weak ~0.2-0.4, moderate ~0.5-0.7, strong ~0.8-1.0). Pick a
+- `strength` - a number from 0 to 1 (weak ~0.2-0.4, moderate ~0.5-0.7, strong ~0.8-1.0). Pick a
   specific value, not a band.
 - `lag` (integer steps, 6 per round): immediate 0-1, short 2-3, multi-round 6+
 - `mechanism` - ONE specific causal sentence (why source moves target). No generic filler;
@@ -39,7 +39,7 @@ Apply the **wiring rules** (guide/1-how-the-model-works.md):
   "focus_node": "semi_supply",
   "edges": [
     { "id": "e_semi_supply_price", "source": "semi_supply", "target": "price_stability",
-      "sign": "+", "magnitude": 0.6, "lag": 2,
+      "sign": "+", "strength": 0.6, "lag": 2,
       "mechanism": "Adequate semiconductor supply prevents shortage-driven price spikes." }
   ]
 }

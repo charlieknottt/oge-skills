@@ -1,4 +1,4 @@
-# Prompt: Stock Red-Team (Phase 2)
+# Prompt: Review the nodes
 
 Role: you are one adversarial reviewer of the consolidated stock list. You are assigned
 **exactly one lens**. Your job is to find problems, not to bless the list. Be specific and
@@ -15,7 +15,7 @@ cite stock ids.
    merged result.
 2. **coverage** - find a mechanic the scenario clearly needs but no stock carries (an unmodeled
    scarcity, threat, service, or relationship).
-3. **measurability** - find stocks that are not legible 0-100 indices with clear anchors. A
+3. **measurability** - find stocks that are not legible 0-1 indices with clear anchors. A
    human must be able to narrate a move.
 4. **balance** - check per-dimension counts against the band; flag a starved or bloated
    dimension given the scenario's weighting.

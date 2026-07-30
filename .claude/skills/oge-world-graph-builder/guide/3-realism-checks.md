@@ -72,7 +72,7 @@ values) but cannot check scenario-specific cause and effect.
 Before we believe a single thing the AI reviewer says, we measure what it actually catches.
 
 **`checks/plant_errors.py`** makes a copy of the graph with about 15 deliberate, known mistakes in
-it (a flipped sign, a made-up mechanism, a deleted edge, a shifted magnitude, a wrong lag), plus a
+it (a flipped sign, a made-up mechanism, a deleted edge, a shifted strength, a wrong lag), plus a
 record of exactly what was broken. It also leaves most edges untouched as **controls**.
 
 **`checks/build_review_panel.py`** builds a review job (an Opus panel, prompted to *refute* rather
@@ -95,10 +95,10 @@ the fact) are:
 | flipped sign | 80% | 15% | sign is derivable from the mechanism; also cross-checked by machine |
 | fabricated mechanism | 60% | 20% | needs noticing the scenario does not support the story |
 | deleted edge | 40% | 25% | spotting something absent is intrinsically hard |
-| magnitude shift | 50% | 20% | **expected to fail** — magnitude is not stated in the scenario |
+| strength shift | 50% | 20% | **expected to fail** — strength is not stated in the scenario |
 | wrong lag | 50% | 20% | **expected to fail** — lag is not stated in the scenario |
 
-Error types that fail (we expect magnitude and lag to fail) are marked **"not covered — human
+Error types that fail (we expect strength and lag to fail) are marked **"not covered — human
 required"** and are never fixed automatically.
 
 **The honesty ceiling, printed on every scorecard:** planted errors are sharper than real ones, so
@@ -120,7 +120,7 @@ comes from:
 Then **`checks/edge_leverage.py`** measures how much each edge actually moves the outcome nodes (by
 removing it and re-running), and **`checks/build_review_queue.py`** combines *leverage × how
 ungrounded it is × how much reviewers disagreed* into a ranked list of about 10-15 edges the human
-should actually look at. A high-leverage edge whose magnitude is only model-inferred floats to the
+should actually look at. A high-leverage edge whose strength is only model-inferred floats to the
 top, because that is exactly the kind of important-but-unverifiable choice a human must make.
 
 ### Step 4: reconcile the failed behavior rules
@@ -138,7 +138,7 @@ A proposed fix is **applied automatically only if all four of these hold**:
 3. a **machine cross-check agrees** (e.g. the sign matches the mechanism), and
 4. **re-running Step 1 introduces no new failure.**
 
-Anything about magnitude, lag, a missing edge, or a "the rule was wrong" call always goes to a
+Anything about strength, lag, a missing edge, or a "the rule was wrong" call always goes to a
 human, never auto-applied. Every automatic fix is written to `change_log.json` (with before/after
 and the evidence) and is fully reversible.
 
@@ -185,4 +185,4 @@ README in `scripts/checks/`.
 - Detecting a **missing** edge is the weakest and most blind-spot-prone case.
 - The calibration catch rate is an **upper bound**; real detection is lower by an unknown amount.
 - This layer **reduces and routes** the human's work. It does not remove the human from the
-  high-stakes magnitude and lag calls, or from owning the residual risk.
+  high-stakes strength and lag calls, or from owning the residual risk.

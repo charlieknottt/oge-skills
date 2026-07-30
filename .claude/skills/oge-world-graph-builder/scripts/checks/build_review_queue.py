@@ -61,7 +61,7 @@ def main():
                 slice_edges.add(e["id"])
 
     # attributes the panel is NOT trusted to check → their ungroundedness matters more
-    uncovered = {"magnitude": coverage.get("magnitude_shift") != "trusted",
+    uncovered = {"strength": coverage.get("strength_shift") != "trusted",
                  "lag": coverage.get("wrong_lag") != "trusted"}
 
     rows = []
@@ -70,7 +70,7 @@ def main():
         prov = r.get("provenance", {})
         # ungroundedness weighted toward calibration-uncovered attributes
         ug, wsum = 0.0, 0.0
-        for attr in ("existence", "sign", "magnitude", "lag"):
+        for attr in ("existence", "sign", "strength", "lag"):
             g = (prov.get(attr, {}) or {}).get("grounding", "model-inferred")
             w = 2.0 if uncovered.get(attr) else 1.0
             ug += GROUND_W.get(g, 0.7) * w
@@ -112,10 +112,10 @@ def main():
 def _question(L, prov, uncovered, r):
     if r.get("verdict") == "flag":
         return f"Panel flagged {r.get('error_class')}: {r.get('reasoning','')}. Confirm?"
-    magg = (prov.get("magnitude", {}) or {}).get("grounding")
-    if uncovered.get("magnitude") and magg in ("model-inferred", "unsupported", None) and L["leverage_norm"] > 0.5:
-        return (f"'{L['source']} --{L['magnitude']}--> {L['target']}' is high-leverage and its magnitude "
-                f"is not doc-grounded (panel can't verify magnitude). Is '{L['magnitude']}' right?")
+    magg = (prov.get("strength", {}) or {}).get("grounding")
+    if uncovered.get("strength") and magg in ("model-inferred", "unsupported", None) and L["leverage_norm"] > 0.5:
+        return (f"'{L['source']} --{L['strength']}--> {L['target']}' is high-leverage and its strength "
+                f"is not doc-grounded (panel can't verify strength). Is '{L['strength']}' right?")
     return "Spot-check: high-leverage edge; confirm sign/mechanism against the scenario."
 
 

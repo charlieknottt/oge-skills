@@ -15,7 +15,7 @@ Key taxonomy facts you must respect:
   **invariant**, not the graph.
 
 ## Decide one disposition (fixed enum)
-- `edge-defect` — a specific edge on the path is wrong (sign/magnitude/lag/mechanism). Give `edge_id`,
+- `edge-defect` — a specific edge on the path is wrong (sign/strength/lag/mechanism). Give `edge_id`,
   a `proposed_fix` {field, to}, and — if the fix is a sign or mechanism correction that the scenario
   supports — a verbatim `grounding_quote` from the scenario.
 - `missing-edge` — the invariant is right but the graph lacks a needed edge (name source→target in

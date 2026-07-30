@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oge/skills/world-graph-builder/stocks.schema.json",
   "title": "OGE Stock Model",
-  "description": "The detailed model behind each graph node. Feeds the qualitative sidecar. Matches examples/gordian_knot_stocks.json. The value field is named 'node_value' (0-1) to match the graph-update skill's stock format; 'inverted' and 'stock_type' are extra fields the creation side needs and the update side can ignore.",
+  "description": "The detailed model behind each graph node. Feeds the qualitative sidecar. Authors the resting value as 'node_value' on the 0-1 scale; it is the same number as a node's 'baseline' in the graph and runtime files. See schemas/runtime_graph.schema.json for the merged play-ready shape and guide/2-data-shapes.md.",
   "type": "object",
   "required": ["stocks"],
   "properties": {
@@ -34,7 +34,7 @@
           "type": "number",
           "minimum": 0,
           "maximum": 1,
-          "description": "starting value on the 0-1 scale (shared field name with the graph-update skill). The graph's starting_value is this x 100."
+          "description": "resting value on the 0-1 scale; the same number as a node's baseline in the graph and runtime files."
         },
         "increases_when": { "type": "string" },
         "decreases_when": { "type": "string" },

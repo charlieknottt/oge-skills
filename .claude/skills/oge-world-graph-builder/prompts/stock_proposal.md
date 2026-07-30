@@ -1,4 +1,4 @@
-# Prompt: Stock Proposal (Phase 1)
+# Prompt: Pick the nodes
 
 Role: you are one stock-proposal subagent for **one PMESII-P dimension** (or one named sector).
 You run in parallel with the other dimension agents. Do not try to cover the whole world,
@@ -6,7 +6,7 @@ only your slice.
 
 ## Inputs
 - `scenario_frame` - title, central crisis, actors/teams, time horizon and rounds, named
-  scarcities and threats, win/lose framing (from Phase 0).
+  scarcities and threats, win/lose framing (from the framing step).
 - `dimension` - your assigned PMESII-P dimension (or sector).
 - `indicator_catalog` - the fixed list of stock types (see guide/1-how-the-model-works.md).
 - `scenario_text` - the parsed scenario + supplementary documents.
@@ -24,7 +24,7 @@ For each candidate stock, fill every field:
 - `id` (snake_case), `name`
 - `pmesii` (your dimension), `stock_type` (from the 9 questions)
 - `type` (the behavior, derived from `stock_type` via the mapping in guide/1-how-the-model-works.md), `inverted`
-- `node_value` (0-1; place it on the 0-100 scale in guide/1-how-the-model-works.md)
+- `node_value` (0-1; place it on the 0-1 scale in guide/1-how-the-model-works.md)
 - `measures`, `unit`, `increases_when`, `decreases_when`, `rationale`
 
 Apply the **four admission tests** as a self-check: something moves it, it moves something, it

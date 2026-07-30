@@ -6,7 +6,7 @@ bootstrap confidence intervals, a catch-rate-vs-difficulty curve, and a coverage
 clear their pre-registered GO threshold). This is the number that licenses trusting the panel at all.
 
 HONESTY: planted errors are, by construction, sharper than real ones, so recall here is an UPPER BOUND
-on real-error detection. The scorecard states this. Classes below threshold (predictably magnitude/lag)
+on real-error detection. The scorecard states this. Classes below threshold (predictably strength/lag)
 are declared "not covered by automated review — human required."
 
 Inputs:
@@ -26,13 +26,13 @@ DEFAULT_THRESH = {
     "flipped_sign":         {"recall_min": 0.80, "fpr_max": 0.15},
     "fabricated_mechanism": {"recall_min": 0.60, "fpr_max": 0.20},
     "deleted_edge":         {"recall_min": 0.40, "fpr_max": 0.25},
-    "magnitude_shift":      {"recall_min": 0.50, "fpr_max": 0.20},
+    "strength_shift":      {"recall_min": 0.50, "fpr_max": 0.20},
     "wrong_lag":            {"recall_min": 0.50, "fpr_max": 0.20},
 }
 # which reviewer signals count as "catching" each class
-FIX_FIELD = {"flipped_sign": "sign", "magnitude_shift": "magnitude", "wrong_lag": "lag",
+FIX_FIELD = {"flipped_sign": "sign", "strength_shift": "strength", "wrong_lag": "lag",
              "fabricated_mechanism": "mechanism"}
-ERR_CLASS = {"flipped_sign": "flipped_sign", "magnitude_shift": "wrong_magnitude",
+ERR_CLASS = {"flipped_sign": "flipped_sign", "strength_shift": "wrong_strength",
              "wrong_lag": "wrong_lag", "fabricated_mechanism": "fabricated_mechanism"}
 
 

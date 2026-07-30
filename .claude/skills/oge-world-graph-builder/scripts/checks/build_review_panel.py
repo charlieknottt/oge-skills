@@ -53,16 +53,16 @@ const BUNDLES = __BUNDLES_JSON__;
 const PROMPT = __PROMPT_JSON__;
 const MODEL = (typeof args === 'object' && args && args.model) ? args.model : __MODEL_JSON__;
 
-const PROV = { type:'object', required:['existence','sign','magnitude','lag'], additionalProperties:false, properties:{
+const PROV = { type:'object', required:['existence','sign','strength','lag'], additionalProperties:false, properties:{
   existence:{ type:'object', required:['grounding'], additionalProperties:false, properties:{ grounding:{type:'string', enum:['stated','implied','model-inferred','unsupported']}, quote:{type:['string','null']} } },
   sign:{ type:'object', required:['grounding'], additionalProperties:false, properties:{ grounding:{type:'string', enum:['stated','implied','model-inferred','unsupported']}, quote:{type:['string','null']} } },
-  magnitude:{ type:'object', required:['grounding'], additionalProperties:false, properties:{ grounding:{type:'string', enum:['stated','implied','model-inferred','unsupported']}, quote:{type:['string','null']} } },
+  strength:{ type:'object', required:['grounding'], additionalProperties:false, properties:{ grounding:{type:'string', enum:['stated','implied','model-inferred','unsupported']}, quote:{type:['string','null']} } },
   lag:{ type:'object', required:['grounding'], additionalProperties:false, properties:{ grounding:{type:'string', enum:['stated','implied','model-inferred','unsupported']}, quote:{type:['string','null']} } } } };
 const EDGE = { type:'object', required:['edge_id','verdict','provenance'], additionalProperties:false, properties:{
   edge_id:{type:'string'}, provenance:PROV,
   verdict:{type:'string', enum:['defensible','flag']},
-  error_class:{type:['string','null'], enum:['flipped_sign','fabricated_mechanism','wrong_magnitude','wrong_lag','other',null]},
-  proposed_fix:{ type:['object','null'], additionalProperties:false, properties:{ field:{type:'string', enum:['sign','magnitude','lag','mechanism']}, to:{type:'string'} } },
+  error_class:{type:['string','null'], enum:['flipped_sign','fabricated_mechanism','wrong_strength','wrong_lag','other',null]},
+  proposed_fix:{ type:['object','null'], additionalProperties:false, properties:{ field:{type:'string', enum:['sign','strength','lag','mechanism']}, to:{type:'string'} } },
   confidence:{type:'string', enum:['low','medium','high']},
   reasoning:{type:'string'} } };
 const SCHEMA = { type:'object', required:['edges'], additionalProperties:false, properties:{
@@ -73,7 +73,7 @@ phase('Review');
 log(`edge realism review: ${BUNDLES.length} bundles on ${MODEL}`);
 const results = await parallel(BUNDLES.map((b, i) => () => {
   const stocksTxt = b.stocks.map(s => `- ${s.id} "${s.name}"${s.inverted?' [inverted: higher=worse]':''}: ${s.measures}. up when: ${s.increases_when}. down when: ${s.decreases_when}`).join('\n');
-  const edgesTxt = b.edges.map(e => `- ${e.id}: ${e.source} --(${e.sign}, ${e.magnitude}, lag ${e.lag})--> ${e.target}\n    mechanism: ${e.mechanism}`).join('\n');
+  const edgesTxt = b.edges.map(e => `- ${e.id}: ${e.source} --(${e.sign}, ${e.strength}, lag ${e.lag})--> ${e.target}\n    mechanism: ${e.mechanism}`).join('\n');
   const prompt = `${PROMPT}\n\n===== SCENARIO =====\n${b.scenario}\n\n===== SIDECAR =====\n${b.sidecar}\n\n===== STOCKS (this bundle) =====\n${stocksTxt}\n\n===== EDGES to review (target sector: ${b.sector}) =====\n${edgesTxt}`;
   return agent(prompt, { label:`review:${b.bundle_id}`, phase:'Review', schema:SCHEMA, model:MODEL, effort:'high' })
     .then(r => ({ bundle_id: b.bundle_id, sector: b.sector, review: r }));
@@ -114,7 +114,7 @@ def main():
         bundles.append({
             "bundle_id": bid, "sector": b["sector"], "scenario": scenario, "sidecar": sidecar,
             "stocks": [stock_brief(stock_by_id[n]) for n in sorted(node_ids) if n in stock_by_id],
-            "edges": [{k: e.get(k) for k in ("id", "source", "target", "sign", "magnitude", "lag", "mechanism")}
+            "edges": [{k: e.get(k) for k in ("id", "source", "target", "sign", "strength", "lag", "mechanism")}
                       for e in b["edges"]],
         })
         review_map[bid] = [e["id"] for e in b["edges"]]

@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oge/skills/world-graph-builder/graph.schema.json",
-  "title": "OGE World Graph (lean runtime graph)",
-  "description": "The runtime context document the live game uses and the Game Manager approves. Matches examples/gordian_knot_graph.json and examples/taiwan_strait_graph.json.",
+  "title": "OGE World Graph (build-time graph)",
+  "description": "The build-time graph (nodes + edges) before runtime state is seeded. The play-ready file is schemas/runtime_graph.schema.json, produced by package_runtime.py. Node values are on the 0-1 scale; edge strength is a 0-1 gain.",
   "type": "object",
   "required": ["nodes", "edges"],
   "properties": {
-    "scenario": { "type": "string", "description": "scenario slug, e.g. gordian_knot (optional)" },
-    "version": { "type": "string", "description": "graph version string (optional)" },
+    "scenario": { "type": "string", "description": "scenario slug, e.g. gordian_knot" },
+    "version": { "type": "string", "description": "graph version string" },
     "nodes": {
       "type": "array",
       "minItems": 1,
@@ -22,7 +22,7 @@
   "$defs": {
     "node": {
       "type": "object",
-      "required": ["id", "label", "category", "type", "starting_value", "inverted"],
+      "required": ["id", "label", "category", "type", "baseline", "inverted"],
       "properties": {
         "id": {
           "type": "string",
@@ -33,18 +33,18 @@
         "category": {
           "type": "string",
           "minLength": 1,
-          "description": "functional swimlane grouping (scenario-specific, e.g. Levers/Supply/Compromise/Outcomes). NOT necessarily a PMESII-P dimension."
+          "description": "functional swimlane grouping (scenario-specific, e.g. Levers/Supply/Outcomes). NOT necessarily a PMESII-P dimension."
         },
         "type": {
           "type": "string",
           "enum": ["Level", "Lever", "Accumulator", "Drifter"],
-          "description": "the node's behavior: Level, Lever, Accumulator, or Drifter. See guide/1-how-the-model-works.md."
+          "description": "the node's behavior. See guide/1-how-the-model-works.md."
         },
-        "starting_value": {
+        "baseline": {
           "type": "number",
           "minimum": 0,
-          "maximum": 100,
-          "description": "initial value on the fixed 0-100 index"
+          "maximum": 1,
+          "description": "resting value on the fixed 0-1 index"
         },
         "inverted": {
           "type": "boolean",
@@ -55,17 +55,17 @@
     },
     "edge": {
       "type": "object",
-      "required": ["id", "source", "target", "sign", "magnitude", "lag", "mechanism"],
+      "required": ["id", "source", "target", "sign", "strength", "lag", "mechanism"],
       "properties": {
         "id": { "type": "string", "pattern": "^e_", "description": "unique id, 'e_' prefix" },
         "source": { "type": "string", "description": "id of the driving node" },
         "target": { "type": "string", "description": "id of the affected node" },
         "sign": { "type": "string", "enum": ["+", "-"], "description": "direction of influence" },
-        "magnitude": {
+        "strength": {
           "type": "number",
           "minimum": 0,
           "maximum": 1,
-          "description": "edge strength as a discrete 0-1 number, chosen at graph creation. Guide bands: weak ~0.2-0.4, moderate ~0.5-0.7, strong ~0.8-1.0. Used directly as the weight of the source's push on the target."
+          "description": "edge strength as a 0-1 gain, chosen at graph creation. Bands: weak ~0.2-0.4, moderate ~0.5-0.7, strong ~0.8-1.0. The direction is carried by 'sign'."
         },
         "lag": {
           "type": "integer",

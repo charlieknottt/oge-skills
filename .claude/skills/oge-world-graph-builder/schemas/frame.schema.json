@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oge/skills/world-graph-builder/frame.schema.json",
+  "title": "OGE Scenario Frame",
+  "description": "The structured read of a scenario that the rest of the build works from. Produced by prompts/scenario_frame.md from the parsed scenario text. Every later step (node proposal, background notes, edges) reads this.",
+  "type": "object",
+  "required": ["title", "central_crisis", "actors", "time_horizon", "rounds", "win_conditions", "lose_conditions"],
+  "properties": {
+    "title": { "type": "string", "minLength": 1 },
+    "central_crisis": { "type": "string", "minLength": 1, "description": "one or two sentences: what the crisis is" },
+    "actors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "role", "played"],
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": "string", "description": "what this actor is / wants" },
+          "played": { "type": "boolean", "description": "true if a human team plays it, false if it is a key unplayed actor" }
+        }
+      }
+    },
+    "teams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "mandate"],
+        "properties": {
+          "name": { "type": "string" },
+          "mandate": { "type": "string" }
+        }
+      }
+    },
+    "time_horizon": { "type": "string", "description": "the modeled time span, e.g. '18 months'" },
+    "rounds": { "type": "integer", "minimum": 1 },
+    "scarcities": { "type": "array", "items": { "type": "string" }, "description": "named things players fight over" },
+    "threats": { "type": "array", "items": { "type": "string" }, "description": "named things that get worse over time" },
+    "win_conditions": { "type": "array", "items": { "type": "string" } },
+    "lose_conditions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

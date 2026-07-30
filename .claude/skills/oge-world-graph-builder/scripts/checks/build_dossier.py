@@ -73,7 +73,7 @@ def main():
     else:
         for c in changes:
             L.append(f"- `{c['edge_id']}` {c['field']}: `{c['from']}` → `{c['to']}`  "
-                     f"({c['basis']}; quote: \"{(c.get('grounding_quote') or '')[:80]}\")")
+                     f"({c.get('basis', 'rails 1-4 passed')}; quote: \"{(c.get('grounding_quote') or '')[:80]}\")")
         L.append("")
 
     # 3. Human review queue

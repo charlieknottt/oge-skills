@@ -9,7 +9,7 @@ This is the plain-English explanation of what the skill builds and why. Read thi
 A "world graph" is a simple cause-and-effect map of a scenario. It has two parts:
 
 - **Nodes** (we also call them "stocks") are the things in the world you can track on a
-  0-100 scale: supply levels, market confidence, military readiness, a threat that is building.
+  0-1 scale: supply levels, market confidence, military readiness, a threat that is building.
 - **Edges** are arrows between nodes that say "when this goes up, that goes up (or down), by
   about this much, after about this long."
 
@@ -67,24 +67,26 @@ Question 9 is important: it is how the levers (a tariff level, an export-control
 blockade intensity) show up. They are ordinary nodes that just happen to have no arrows coming
 into them, because only a direct decision moves them.
 
-### The 0-100 scale
+### The 0-1 scale
 
-Every node sits on the same 0-100 scale so values mean the same thing across the game:
+Every node sits on the same 0-1 scale so values mean the same thing across the game:
 
 | Value | Meaning |
 |---|---|
-| 0 | collapse / nonexistent |
-| 25 | struggling, below average |
-| 50 | solid, average (default) |
-| 75 | strong, top-tier |
-| 90 | elite |
-| 100 | theoretical ceiling |
+| 0.0 | collapse / nonexistent |
+| 0.25 | struggling, below average |
+| 0.5 | solid, average (default) |
+| 0.75 | strong, top-tier |
+| 0.9 | elite |
+| 1.0 | theoretical ceiling |
 
 Some nodes are **inverted**, meaning a low value is the good state (a threat, a compromise, a
-level of friction). For those, read the scale upside down: low is healthy.
+level of friction). For those, read the scale upside down: low is healthy. This flag is not just for
+reading the display: during play it changes the math (see guide/4-the-engine.md), so set it
+correctly.
 
 When you build the graph you pick each node's **starting value** on this scale. Default healthy
-things to 55-65, contested/at-risk things lower, and threats low (because they are inverted, so
+things to 0.55-0.65, contested/at-risk things lower, and threats low (because they are inverted, so
 low means "not much threat yet").
 
 ## How a node moves on its own: the 4 behaviors
@@ -100,6 +102,11 @@ The behavior is not picked separately, it is decided by the stock type above.
 | **Drifter** | moves on a fixed schedule regardless of play | a decision can slow it, never stop it | a rising threat, mounting media pressure |
 
 If a node does not clearly need one of the other three, it is a **Level**. That is the default.
+
+Other modeling frameworks name more behaviors (Clock, Ratio, Zero-sum pool). Those fold onto these
+four: a Clock is a Drifter driven by a scheduled change, a Zero-sum pool is a set of Levels kept in
+balance by offsetting changes, and a Ratio is a Level computed from its sources. The engine only ever
+sees the four. For exactly how each one moves during play, see guide/4-the-engine.md.
 
 **A note on Levers.** A lever is just a normal node with no incoming arrows. There is no special
 control panel for it. It changes only when a player decides to change it, and all of its
@@ -124,7 +131,7 @@ something grows, the benefit still waits out the full delay.
 An edge is one arrow from a source node to a target node. It carries:
 
 - a **sign** (`+` means they move the same way, `-` means opposite),
-- a **magnitude** (a 0-1 number for how strong the push is),
+- a **strength** (a 0-1 number for how strong the push is),
 - a **lag** (how many steps until the effect lands; 6 steps = 1 round),
 - a one-sentence **reason** (the actual mechanism, e.g. "tariffs raise input costs, so prices rise").
 
@@ -175,6 +182,6 @@ the player actually committed:
 | Major | 9-14 | a large, focused commitment |
 | Transformational | 15-20 | an all-in, defining bet (rare) |
 
-This matters for the builder only in one way: make every node a clear 0-100 index that a person
+This matters for the builder only in one way: make every node a clear 0-1 index that a person
 can narrate a move on, so the runtime can size these effects against it. (This "effect size" is a
-runtime idea and is separate from an edge's 0-1 magnitude.)
+runtime idea and is separate from an edge's 0-1 strength.)

@@ -11,12 +11,12 @@ blind pass. The panel later reviews all edges blind to which/how-many are plante
 
 Error classes:
   flipped_sign          + <-> -                              (also caught deterministically by mechanism_audit)
-  magnitude_shift       jump to the opposite extreme (0.3<->0.9)  (calibration expects LOW catch — unfalsifiable from doc)
+  strength_shift       jump to the opposite extreme (0.3<->0.9)  (calibration expects LOW catch — unfalsifiable from doc)
   wrong_lag             lag shifted across a band            (calibration expects LOW catch)
   fabricated_mechanism  mechanism replaced with plausible-but-false sentence, sign kept
   deleted_edge          a real edge removed (tests the missing-edge lens; recorded in manifest)
 
-Difficulty is a heuristic proxy: high-magnitude edges are "obvious" when flipped, low ones "subtle".
+Difficulty is a heuristic proxy: high-strength edges are "obvious" when flipped, low ones "subtle".
 This is honest-but-imperfect (see guide/3-realism-checks.md); the real doc-groundedness of each edge
 comes from the provenance pass, which can refine difficulty later.
 
@@ -29,11 +29,8 @@ import json
 import os
 import random
 
-def _magnum(m):
-    # read magnitude as a number, tolerating the legacy weak/moderate/strong strings
-    if isinstance(m, (int, float)):
-        return float(m)
-    return {"weak": 0.35, "moderate": 0.6, "strong": 0.9}.get(m, 0.6)
+def _edge_strength(m):
+    return float(m) if isinstance(m, (int, float)) and not isinstance(m, bool) else 0.6
 
 
 FABRICATED = [
@@ -45,14 +42,14 @@ FABRICATED = [
 
 
 def difficulty_for(edge, klass):
-    mag = _magnum(edge.get("magnitude", 0.6))
+    mag = _edge_strength(edge.get("strength", 0.6))
     if klass == "flipped_sign":
         return "obvious" if mag >= 0.75 else ("subtle" if mag < 0.45 else "medium")
     if klass == "fabricated_mechanism":
         return "medium"
     if klass == "deleted_edge":
         return "obvious" if mag >= 0.75 else "subtle"
-    if klass == "magnitude_shift":
+    if klass == "strength_shift":
         return "subtle"      # unfalsifiable from a qualitative doc
     if klass == "wrong_lag":
         return "subtle"
@@ -75,7 +72,7 @@ def main():
     # choose disjoint edges to mutate (one defect each); the rest are controls
     idx = list(range(len(edges)))
     rng.shuffle(idx)
-    classes = ["flipped_sign", "magnitude_shift", "wrong_lag", "fabricated_mechanism", "deleted_edge"]
+    classes = ["flipped_sign", "strength_shift", "wrong_lag", "fabricated_mechanism", "deleted_edge"]
     picks, used = {}, set()
     for klass in classes:
         chosen = []
@@ -105,12 +102,12 @@ def main():
                 m["from"] = {"sign": e["sign"]}
                 e["sign"] = "-" if e["sign"] == "+" else "+"
                 m["to"] = {"sign": e["sign"]}
-            elif klass == "magnitude_shift":
-                old = e.get("magnitude", 0.6)
-                new = 0.9 if _magnum(old) < 0.55 else 0.3   # jump to the opposite extreme
-                m["from"] = {"magnitude": old}
-                e["magnitude"] = new
-                m["to"] = {"magnitude": new}
+            elif klass == "strength_shift":
+                old = e.get("strength", 0.6)
+                new = 0.9 if _edge_strength(old) < 0.55 else 0.3   # jump to the opposite extreme
+                m["from"] = {"strength": old}
+                e["strength"] = new
+                m["to"] = {"strength": new}
             elif klass == "wrong_lag":
                 old = int(e.get("lag", 1))
                 new = 6 if old <= 2 else 1
@@ -123,7 +120,7 @@ def main():
                 m["to"] = {"mechanism": e["mechanism"]}
             elif klass == "deleted_edge":
                 m["from"] = {"present": True, "mechanism": e.get("mechanism", ""),
-                             "sign": e.get("sign"), "magnitude": e.get("magnitude")}
+                             "sign": e.get("sign"), "strength": e.get("strength")}
                 m["to"] = {"present": False}
                 delete_ids.add(e["id"])
             manifest["mutations"].append(m)

@@ -1,4 +1,4 @@
-# Prompt: Qualitative Sidecar (Phase 3)
+# Prompt: Write the background notes
 
 Role: you generate the baseline qualitative context document. This holds everything about the
 world that cannot be a numeric stock. It is generated once and **locked at launch** (mid-game

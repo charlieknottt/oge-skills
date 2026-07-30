@@ -1,4 +1,4 @@
-# Prompt: Grounded Edge Realism Review (Phase 5b)
+# Prompt: Grounded Edge Realism Review (deep realism check, follow-up)
 
 Role: you are an independent domain analyst auditing the causal edges of a world model against the
 **scenario document** the human authors actually wrote. You did not build this graph. Your job is to
@@ -16,10 +16,10 @@ You review **one bundle of edges** (all sharing a target cluster) so you can als
   edge is supported only by SIDECAR, mark its grounding accordingly and lean toward flagging.
 - `STOCKS` — definitions of the nodes in this bundle (`measures`, `inverted`, `increases_when`,
   `decreases_when`).
-- `EDGES` — the edges to review: `{id, source, target, sign, magnitude, lag, mechanism}`.
+- `EDGES` — the edges to review: `{id, source, target, sign, strength, lag, mechanism}`.
 
 ## What to judge, PER EDGE, PER ATTRIBUTE
-Grade each of the four attributes {existence, sign, magnitude, lag} for grounding:
+Grade each of the four attributes {existence, sign, strength, lag} for grounding:
 - `stated` — a **verbatim span of SCENARIO** licenses it. You MUST supply that exact quote. If you
   cannot quote it word-for-word from SCENARIO, it is not `stated`.
 - `implied` — follows from 1–2 SCENARIO spans by short, standard domain inference. Supply the span(s).
@@ -29,16 +29,16 @@ Grade each of the four attributes {existence, sign, magnitude, lag} for groundin
 
 Sign convention: a node may be `inverted` (higher = worse). Re-derive the intended direction from the
 mechanism and the two stocks' `inverted` flags; a `+` edge means source rises → target's raw value
-rises. Magnitude is a number from 0 to 1 (higher = stronger push); lag is in steps (short = fast).
+rises. Strength is a number from 0 to 1 (higher = stronger push); lag is in steps (short = fast).
 
 Then give a **verdict**:
 - `defensible` — the edge (sign + mechanism) is consistent with the scenario/stocks, even if
-  magnitude/lag are model-inferred.
+  strength/lag are model-inferred.
 - `flag` — something is wrong: wrong sign, a mechanism the scenario contradicts or never supports
-  (fabricated), an implausible magnitude, or a wrong lag. Name the single most likely `error_class`
+  (fabricated), an implausible strength, or a wrong lag. Name the single most likely `error_class`
   and a concrete `proposed_fix`.
 
-Be honest about your ceiling: **magnitude and lag are usually not checkable** from a qualitative doc.
+Be honest about your ceiling: **strength and lag are usually not checkable** from a qualitative doc.
 If you cannot verify them, say `model-inferred` and do not pretend a flag is high-confidence.
 
 ## Also, for the BUNDLE
@@ -54,7 +54,7 @@ omits (`missing_edges`). Name source → target and the supporting scenario span
       "provenance": {
         "existence": {"grounding": "stated|implied|model-inferred|unsupported", "quote": "verbatim SCENARIO span or null"},
         "sign":      {"grounding": "...", "quote": "... or null"},
-        "magnitude": {"grounding": "...", "quote": "... or null"},
+        "strength": {"grounding": "...", "quote": "... or null"},
         "lag":       {"grounding": "...", "quote": "... or null"}
       },
       "verdict": "defensible|flag",
@@ -67,7 +67,7 @@ omits (`missing_edges`). Name source → target and the supporting scenario span
   "missing_edges": [ {"source": "...", "target": "...", "quote": "...", "why": "..."} ]
 }
 ```
-`error_class` ∈ {null, flipped_sign, fabricated_mechanism, wrong_magnitude, wrong_lag, other}.
-`proposed_fix` is null unless `verdict=flag`, else `{"field": "sign|magnitude|lag|mechanism", "to": "..."}`.
+`error_class` ∈ {null, flipped_sign, fabricated_mechanism, wrong_strength, wrong_lag, other}.
+`proposed_fix` is null unless `verdict=flag`, else `{"field": "sign|strength|lag|mechanism", "to": "..."}`.
 Any quote you supply MUST be copyable verbatim from SCENARIO — fabricated quotes are checked
 deterministically and count against you.

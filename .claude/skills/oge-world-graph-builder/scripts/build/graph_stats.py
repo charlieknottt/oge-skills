@@ -78,7 +78,7 @@ def compute(graph):
         if t in by_id:
             indeg[t] += 1
         sign_counts[e.get("sign")] += 1
-        m = e.get("magnitude")
+        m = e.get("strength")
         if isinstance(m, (int, float)):
             mag_counts["weak (<0.45)" if m < 0.45 else "strong (>0.75)" if m > 0.75 else "moderate (0.45-0.75)"] += 1
         else:
@@ -109,7 +109,7 @@ def compute(graph):
         "categories": dict(cat_counts),
         "pmesii": dict(pmesii_counts) or None,
         "edges_by_sign": dict(sign_counts),
-        "edges_by_magnitude": dict(mag_counts),
+        "edges_by_strength": dict(mag_counts),
         "avg_total_degree": avg_deg,
         "top_in_degree": [(n, indeg[n]) for n in top_in],
         "top_out_degree": [(n, outdeg[n]) for n in top_out],
@@ -152,7 +152,7 @@ def main():
     if r["pmesii"]:
         _print_table("PMESII-P", r["pmesii"])
     _print_table("edges by sign", r["edges_by_sign"])
-    _print_table("edges by magnitude", r["edges_by_magnitude"])
+    _print_table("edges by strength", r["edges_by_strength"])
     print(f"  feedback loops (SCCs > 1 node): {r['feedback_loop_count']}  "
           f"({r['nodes_in_feedback_loops']} nodes involved)")
     if r["largest_feedback_components"]:

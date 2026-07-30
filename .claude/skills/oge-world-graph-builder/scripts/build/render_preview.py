@@ -11,9 +11,10 @@ DATA (nodes, edges, groups, synthetic decisions/injects, round/tick config) is g
 the supplied world_graph.json.
 
 This is the deterministic SHOWCASE engine (a math demo for vetting propagation), NOT the
-runtime; at game time Claude is the physics. The graph carries a 0-1 edge magnitude and an
-integer lag, so this uses magnitude directly as the edge weight and maps dynamics
-{Level,Lever,Accumulator,Drifter} -> rate params, and uses the edge lag directly.
+runtime; at game time Claude is the physics. The graph carries a 0-1 edge strength and an
+integer lag, so this uses strength directly as the edge weight and maps dynamics
+{Level,Lever,Accumulator,Drifter} -> rate params, and uses the edge lag directly. Node values
+are shown on a 0-100 bar for readability (the underlying data is on the 0-1 scale).
 
 Usage:
     python3 render_preview.py world_graph.json
@@ -26,11 +27,9 @@ import sys
 
 # dynamics -> (alphaUp slow, alphaDown fast). Levers/anchors hold at 0,0 (move only on shock).
 RATES = {"Lever": (0.0, 0.0), "Level": (0.12, 0.22), "Accumulator": (0.06, 0.13), "Drifter": (0.10, 0.18)}
-def mag_weight(m):
-    # magnitude is a number in [0, 1]; tolerate the legacy weak/moderate/strong strings.
-    if isinstance(m, (int, float)):
-        return float(m)
-    return {"weak": 0.35, "moderate": 0.6, "strong": 0.9}.get(m, 0.6)
+def edge_gain(s):
+    # strength is a number in [0, 1]
+    return float(s) if isinstance(s, (int, float)) and not isinstance(s, bool) else 0.6
 # left-to-right swimlane order: inputs -> world -> outcomes (others appended in first-seen order)
 GROUP_PREF = ["Levers", "Buildouts", "Compromise", "Supply", "Infrastructure", "Economy",
               "Outcomes", "Pool"]
@@ -46,13 +45,13 @@ def build_data_js(graph, rounds, ticks, seed):
     inv_map = {}
     for n in nodes:
         au, ad = RATES.get(n["type"], RATES["Level"])
-        raw[n["id"]] = [n["label"], float(n["starting_value"]), au, ad,
+        raw[n["id"]] = [n["label"], float(n["baseline"]) * 100, au, ad,
                         (0 if n.get("inverted") else 1), n["category"]]
         type_map[n["id"]] = n["type"]
         inv_map[n["id"]] = bool(n.get("inverted"))
 
     edge_js = [[e["source"], e["target"],
-                round(mag_weight(e.get("magnitude", 0.6)) * (1 if e.get("sign", "+") == "+" else -1), 3),
+                round(edge_gain(e.get("strength", 0.6)) * (1 if e.get("sign", "+") == "+" else -1), 3),
                 int(e.get("lag", 1)), e.get("mechanism", "")]
                for e in edges if e["source"] in by_id and e["target"] in by_id]
 

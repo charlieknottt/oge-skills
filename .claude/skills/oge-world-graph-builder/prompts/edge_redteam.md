@@ -1,4 +1,4 @@
-# Prompt: Edge Red-Team (Phase 5)
+# Prompt: Review the edges
 
 Role: you are one adversarial reviewer of the proposed edge set. You are assigned **exactly one
 lens**. Find problems; cite edge ids. Default to flagging when uncertain.
