@@ -71,8 +71,8 @@ This is the fuller model with all the research metadata. It feeds the sidecar. E
 ```json
 {
   "id": "safe_supply", "name": "Safe Semiconductor Supply", "pmesii": "Infrastructure",
-  "measures": "share of certified, uncompromised chips in the supply", "unit": "index 0-1",
-  "node_value": 0.42,
+  "measures": "share of certified, uncompromised chips in the supply", "unit": "index 0-100",
+  "node_value": 42,
   "increases_when": "domestic capacity comes online; trusted allies expand output",
   "decreases_when": "a compromise is discovered; an ally cuts exports",
   "rationale": "the central scarcity the whole scenario turns on",
@@ -85,22 +85,20 @@ This is the fuller model with all the research metadata. It feeds the sidecar. E
 | `id`, `name` | the same id as the graph node, plus a longer name |
 | `pmesii` | which of the 7 dimensions it belongs to |
 | `measures`, `unit` | what it concretely measures, and its unit |
-| `node_value` | the starting value on the **0-1** scale |
+| `node_value` | the starting value on the **0-100** scale |
 | `increases_when`, `decreases_when` | plain descriptions of what moves it up and down |
 | `rationale` | why this node exists |
 | `inverted` | same meaning as on the graph node |
 | `stock_type` | one of the 9 stock types (guide 1); the node's behavior is derived from this |
 | `sector` | optional free-text grouping |
 
-### Two scales, on purpose
+### One scale everywhere
 
-- The **stock** file uses `node_value` on a **0-1** scale.
-- The **graph** file uses `starting_value` on a **0-100** scale.
-- They are the same number: `starting_value = node_value × 100`.
-
-The stock file uses `node_value` because that is the field name the graph-**update** skill uses,
-so the two skills read each other's stocks without translation. The extra fields the creation side
-needs (`inverted`, `stock_type`) are just ignored by the update side.
+Both files use the **0-100** scale. `stocks.json` uses `node_value` and `world_graph.json` uses
+`starting_value`; for a given node they are the **same number**. The stock file keeps the field
+name `node_value` because that is what the graph-**update** skill uses, so the two skills read each
+other's stocks without translation. The extra fields the creation side needs (`inverted`,
+`stock_type`) are just ignored by the update side.
 
 ## `qualitative_sidecar.md` — the plain-text context
 
